@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Fiscal — Vendas</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0b1220;
+    --card: #121a2c;
+    --card-hi: #182238;
+    --border: #22304a;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --orange: #f97316;
+    --red: #ef4444;
+    --purple: #a855f7;
+    --yellow: #eab308;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 24px;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-dim); font-size: 14px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .card h2 { font-size: 16px; margin: 0 0 16px; color: var(--text); }
+  .card h2 .hint { color: var(--text-dim); font-weight: 400; font-size: 13px; }
+
+  /* ===== Meta / progresso ===== */
+  .meta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .meta-num { font-size: 40px; font-weight: 700; }
+  .meta-num span { font-size: 20px; color: var(--text-dim); font-weight: 400; }
+  .progress-track { flex: 1; min-width: 220px; height: 14px; background: var(--card-hi); border-radius: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 8px; transition: width .4s; }
+  .meta-pace { color: var(--text-dim); font-size: 13px; }
+
+  /* ===== KPI grid ===== */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .kpi { background: var(--card-hi); border-radius: 10px; padding: 14px; text-align: center; }
+  .kpi .val { font-size: 26px; font-weight: 700; }
+  .kpi .lbl { color: var(--text-dim); font-size: 12px; margin-top: 4px; }
+
+  /* ===== Funil ===== */
+  .funnel { display: flex; flex-direction: column; gap: 10px; }
+  .funnel-row { display: grid; grid-template-columns: 140px 1fr 70px 90px; align-items: center; gap: 10px; }
+  .funnel-label { font-size: 13px; color: var(--text-dim); }
+  .funnel-track { height: 22px; background: var(--card-hi); border-radius: 6px; overflow: hidden; }
+  .funnel-fill { height: 100%; border-radius: 6px; background: var(--accent); }
+  .funnel-val { text-align: right; font-weight: 600; }
+  .funnel-conv { text-align: right; font-size: 12px; color: var(--green); }
+
+  /* ===== Closers ===== */
+  .closers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .closer-card { background: var(--card-hi); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .closer-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .closer-head img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+  .closer-head .name { font-weight: 700; font-size: 16px; }
+  .closer-head .sub { color: var(--text-dim); font-size: 12px; }
+  .closer-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .closer-metrics .m { background: var(--card); border-radius: 8px; padding: 8px; text-align: center; }
+  .closer-metrics .m .v { font-size: 18px; font-weight: 700; }
+  .closer-metrics .m .l { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+  .closer-conv { margin-top: 10px; font-size: 12px; color: var(--text-dim); display: flex; gap: 14px; flex-wrap: wrap; }
+  .closer-conv b { color: var(--green); }
+
+  /* ===== Tabela previsão ===== */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-dim); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+  tr:hover td { background: var(--card-hi); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+  .badge.won { background: rgba(34,197,94,.15); color: var(--green); }
+  .badge.open { background: rgba(148,163,184,.15); color: var(--text-dim); }
+  a.link { color: var(--accent); text-decoration: none; }
+  a.link:hover { text-decoration: underline; }
+
+  .chart-wrap { height: 280px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Studio Fiscal — Equipe de Vendas</h1>
+      <div class="subtitle" id="subtitle"></div>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2>Meta do mês</h2>
+    <div class="meta-row">
+      <div class="meta-num"><span id="meta-atual">0</span> <span>/ <span id="meta-total">0</span> contratos</span></div>
+      <div class="progress-track"><div class="progress-fill" id="meta-fill" style="width:0%"></div></div>
+      <div class="meta-pace" id="meta-pace"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ritmo — geração de leads e CC1 realizadas por dia</h2>
+    <div class="chart-wrap"><canvas id="ritmoChart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <h2>Consolidado do time <span class="hint">— funil CC1 → FPQ → CC2 → CC3</span></h2>
+    <div id="funnel-consolidado" class="funnel"></div>
+  </div>
+
+  <div class="card">
+    <h2>Por closer</h2>
+    <div class="closers-grid" id="closers-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>Previsão <span class="hint">— preenchida manualmente pelo time (planilha)</span></h2>
+    <div style="overflow-x:auto">
+      <table id="previsao-table">
+        <thead>
+          <tr>
+            <th>Data registro</th><th>Closer</th><th>Lead</th><th>Modelo</th><th>Bandeira</th>
+            <th>Venda</th><th>Caixa</th><th>Fechamento esperado</th><th>Status</th>
+            <th>Venda realizada</th><th>Caixa realizado</th><th>Deal</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const D = {"mes_label": "Julho 2026", "periodo_inicio": "2026-07-01", "periodo_fim": "2026-07-31", "gerado_em": "2026-07-02T10:55", "meta_contratos": 15, "closers": [{"nome": "Leonardo Ribeiro", "foto": "https://usericons.pipedrive.com/profile_120x120_22760768_5329c507a3b64e959d03f5aea84e92a7.jpg", "cc1_realizada": 1, "cc1_futura": 15, "fpq_realizada": 1, "cc2_realizada": 0, "cc2_futura": 2, "cc3_realizada": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, {"nome": "Adalberto Neto", "foto": "https://usericons.pipedrive.com/profile_120x120_24688510_1a239cdc0558254144dce6bc90463a9a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}, {"nome": "Fred Garcia", "foto": "https://usericons.pipedrive.com/profile_120x120_23882023_7a0d02ab9e79475246f7e835ffbcd52a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 2, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, {"nome": "Luciana Issler", "foto": "https://usericons.pipedrive.com/profile_120x120_25500365_4489819785fd00c507f273ac2dbf8339.jpg", "cc1_realizada": 1, "cc1_futura": 0, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 1, "cc3_realizada": 1, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}], "consolidado": {"cc1_realizada": 6, "cc1_futura": 19, "fpq_realizada": 3, "cc2_realizada": 0, "cc2_futura": 11, "cc3_realizada": 1, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 50.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, "ritmo": {"dias_uteis_total": 23, "dias_uteis_passados": 2, "daily_leads": {}, "daily_cc1": {"2026-07-01": 5, "2026-07-02": 1}}, "previsao": [{"data_registro": "2026-02-07", "closer": "Leonardo Ribeiro", "lead": "Rangel", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 35000, "data_fechamento_esperada": "2026-07-07", "status": "Avaliar pripostacom Yuri", "deal_id": 36020.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/36020", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "João Caldeira", "modelo": null, "bandeira": null, "venda": 50000, "caixa": 48250, "data_fechamento_esperada": "2026-07-06", "status": "Atualizar proposta", "deal_id": null, "deal_link": "joao_caldeira_lima@hotmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "Antonio Fernandes", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 31500, "data_fechamento_esperada": "2026-07-08", "status": "Definir data de inicio", "deal_id": null, "deal_link": "adm.afrf@gmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Fred Garcia", "lead": "FELIPE", "modelo": null, "bandeira": null, "venda": 90000, "caixa": 50000, "data_fechamento_esperada": "2026-07-25", "status": "CC3 A REALIZAR", "deal_id": 94494.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/94494", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}]};
+
+function fmtMoney(v) {
+  if (v === null || v === undefined || isNaN(v)) return '—';
+  return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL', maximumFractionDigits:0});
+}
+function fmtDate(v) {
+  if (!v) return '—';
+  const [y,m,d] = String(v).split('-');
+  return d && m && y ? `${d}/${m}/${y.slice(2)}` : v;
+}
+function pctStr(v) { return (v === null || v === undefined) ? '—' : v + '%'; }
+
+document.getElementById('subtitle').textContent =
+  `${D.mes_label} · ${fmtDate(D.periodo_inicio)} a ${fmtDate(D.periodo_fim)} · atualizado em ${D.gerado_em.replace('T',' ')}`;
+
+// ===== Meta =====
+document.getElementById('meta-atual').textContent = D.consolidado.contratos;
+document.getElementById('meta-total').textContent = D.meta_contratos;
+const pctMeta = D.meta_contratos ? Math.min(100, 100 * D.consolidado.contratos / D.meta_contratos) : 0;
+document.getElementById('meta-fill').style.width = pctMeta + '%';
+document.getElementById('meta-pace').textContent =
+  `${D.ritmo.dias_uteis_passados} / ${D.ritmo.dias_uteis_total} dias úteis do mês`;
+
+// ===== Ritmo chart =====
+(function() {
+  const start = new Date(D.periodo_inicio + 'T00:00:00');
+  const end = new Date(D.periodo_fim + 'T00:00:00');
+  const labels = [];
+  const leads = [];
+  const cc1 = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const iso = d.toISOString().slice(0, 10);
+    labels.push(iso.slice(8, 10) + '/' + iso.slice(5, 7));
+    leads.push(D.ritmo.daily_leads[iso] || 0);
+    cc1.push(D.ritmo.daily_cc1[iso] || 0);
+  }
+  new Chart(document.getElementById('ritmoChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Leads', data: leads, borderColor: '#a855f7', backgroundColor: '#a855f733', tension: .3 },
+        { label: 'CC1 realizada', data: cc1, borderColor: '#22c55e', backgroundColor: '#22c55e33', tension: .3 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#e2e8f0' } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { color: '#22304a' } },
+        y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: '#22304a' } },
+      }
+    }
+  });
+})();
+
+// ===== Funil consolidado =====
+function renderFunnel(elId, m) {
+  const stages = [
+    ['CC1 realizada', m.cc1_realizada, null],
+    ['FPQ recebida', m.fpq_realizada, m.conversao.cc1_para_fpq],
+    ['CC2 realizada', m.cc2_realizada, m.conversao.fpq_para_cc2],
+    ['CC3 realizada', m.cc3_realizada, m.conversao.cc2_para_cc3],
+  ];
+  const max = Math.max(1, ...stages.map(s => s[1]));
+  const el = document.getElementById(elId);
+  el.innerHTML = stages.map(([label, val, conv]) => `
+    <div class="funnel-row">
+      <div class="funnel-label">${label}</div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:${100 * val / max}%"></div></div>
+      <div class="funnel-val">${val}</div>
+      <div class="funnel-conv">${conv === null ? '' : 'conv. ' + conv + '%'}</div>
+    </div>
+  `).join('');
+}
+renderFunnel('funnel-consolidado', D.consolidado);
+
+// ===== Closers =====
+document.getElementById('closers-grid').innerHTML = D.closers.map(c => `
+  <div class="closer-card">
+    <div class="closer-head">
+      <img src="${c.foto}" alt="${c.nome}">
+      <div>
+        <div class="name">${c.nome}</div>
+        <div class="sub">${c.leads} leads · ${c.contratos} contratos no mês</div>
+      </div>
+    </div>
+    <div class="closer-metrics">
+      <div class="m"><div class="v">${c.cc1_realizada}</div><div class="l">CC1 realizada</div></div>
+      <div class="m"><div class="v">${c.cc1_futura}</div><div class="l">CC1 a acontecer</div></div>
+      <div class="m"><div class="v">${c.fpq_realizada}</div><div class="l">FPQ recebida</div></div>
+      <div class="m"><div class="v">${c.cc2_realizada}</div><div class="l">CC2 realizada</div></div>
+      <div class="m"><div class="v">${c.cc2_futura}</div><div class="l">CC2 a acontecer</div></div>
+      <div class="m"><div class="v">${c.cc3_realizada}</div><div class="l">CC3 realizada</div></div>
+    </div>
+    <div class="closer-conv">
+      <div>CC1→FPQ <b>${pctStr(c.conversao.cc1_para_fpq)}</b></div>
+      <div>FPQ→CC2 <b>${pctStr(c.conversao.fpq_para_cc2)}</b></div>
+      <div>CC2→CC3 <b>${pctStr(c.conversao.cc2_para_cc3)}</b></div>
+    </div>
+  </div>
+`).join('');
+
+// ===== Previsão =====
+const tbody = document.querySelector('#previsao-table tbody');
+tbody.innerHTML = D.previsao.map(r => `
+  <tr>
+    <td>${fmtDate(r.data_registro)}</td>
+    <td>${r.closer || '—'}</td>
+    <td>${r.lead || '—'}</td>
+    <td>${r.modelo || '—'}</td>
+    <td>${r.bandeira || '—'}</td>
+    <td>${fmtMoney(r.venda)}</td>
+    <td>${fmtMoney(r.caixa)}</td>
+    <td>${fmtDate(r.data_fechamento_esperada)}</td>
+    <td>${r.deal_status === 'won' ? '<span class="badge won">Ganho</span>' : (r.status || '—')}</td>
+    <td>${fmtMoney(r.venda_realizada)}</td>
+    <td>${fmtMoney(r.caixa_realizado)}</td>
+    <td>${r.deal_link && r.deal_link.startsWith('http') ? `<a class="link" href="${r.deal_link}" target="_blank">abrir</a>` : '—'}</td>
+  </tr>
+`).join('');
+</script>
+</body>
+</html>
