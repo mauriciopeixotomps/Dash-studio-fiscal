@@ -59,16 +59,59 @@
   /* ===== Pace por indicador ===== */
   .pace-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
   .pace-card { background: var(--card-hi); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-  .pace-card .pace-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .pace-card .pace-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
   .pace-card .pace-title { font-weight: 700; font-size: 14px; }
   .pace-card .pace-nums { font-size: 12px; color: var(--text-dim); }
   .pace-card .pace-nums b { color: var(--text); }
   .pace-card .pace-chart { height: 130px; }
   .pace-card .pace-tag { font-size: 10px; color: var(--text-dim); background: var(--card); border-radius: 999px; padding: 1px 8px; margin-left: 6px; }
+  .pace-legend { display: flex; gap: 14px; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .pace-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .pace-legend .sw { width: 14px; height: 0; border-top: 2px solid; display: inline-block; }
+  .pace-legend .sw.dash { border-top-style: dashed; border-top-color: #94a3b8; }
+
+  /* ===== Scoreboard ===== */
+  .scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .score-item { background: var(--card-hi); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .score-item .lbl { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+  .score-item .val { font-size: 30px; font-weight: 700; margin-top: 6px; }
+  .score-item.green .val { color: var(--green); }
+  .score-item.accent .val { color: var(--accent); }
+  .score-item.orange .val { color: var(--orange); }
 
   /* ===== Comparativo closers ===== */
-  .compare-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px; }
-  .compare-chart-wrap { height: 260px; }
+  .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .compare-card { background: var(--card-hi); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .compare-card .name { font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+  .compare-card .funnel-row { grid-template-columns: 76px 1fr 34px; }
+  .compare-kpis { display: flex; gap: 10px; margin-top: 12px; }
+  .compare-kpis .m { flex: 1; background: var(--card); border-radius: 8px; padding: 6px; text-align: center; }
+  .compare-kpis .m .v { font-size: 15px; font-weight: 700; }
+  .compare-kpis .m .l { font-size: 10px; color: var(--text-dim); }
+
+  /* ===== Perdidos ===== */
+  .lost-summary { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .lost-summary .item { background: var(--card-hi); border-radius: 10px; padding: 12px 18px; }
+  .lost-summary .item .v { font-size: 24px; font-weight: 700; }
+  .lost-summary .item .l { font-size: 12px; color: var(--text-dim); }
+  .lost-reasons { display: flex; flex-direction: column; gap: 8px; }
+  .lost-reason-row { display: grid; grid-template-columns: 160px 1fr 40px; align-items: center; gap: 10px; }
+  .lost-reason-row .l { font-size: 13px; color: var(--text-dim); }
+  .lost-reason-track { height: 16px; background: var(--card-hi); border-radius: 6px; overflow: hidden; }
+  .lost-reason-fill { height: 100%; background: var(--red); border-radius: 6px; }
+  .lost-reason-row .v { text-align: right; font-weight: 600; font-size: 13px; }
+
+  /* ===== Ranking campanhas/criativos ===== */
+  .ranking-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+  .ranking-block h4 { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 10px; }
+  .ranking-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ranking-list { display: flex; flex-direction: column; gap: 6px; }
+  .ranking-list .rk-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+  .ranking-list.best .rk-title { color: var(--green); }
+  .ranking-list.worst .rk-title { color: var(--red); }
+  .rk-row { background: var(--card-hi); border-radius: 8px; padding: 8px 10px; font-size: 12px; }
+  .rk-row .rk-name { color: var(--text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rk-row .rk-nums { color: var(--text-dim); margin-top: 2px; }
 
   /* ===== KPI grid ===== */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
@@ -92,7 +135,7 @@
   .closer-head img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
   .closer-head .name { font-weight: 700; font-size: 16px; }
   .closer-head .sub { color: var(--text-dim); font-size: 12px; }
-  .closer-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .closer-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .closer-metrics .m { background: var(--card); border-radius: 8px; padding: 8px; text-align: center; }
   .closer-metrics .m .v { font-size: 18px; font-weight: 700; }
   .closer-metrics .m .l { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
@@ -121,6 +164,24 @@
       <div class="subtitle" id="subtitle"></div>
     </div>
   </header>
+
+  <div class="card">
+    <h2>Placar do mês <span class="hint">— com base no preenchimento da planilha de previsão (negócio marcado como Ganho no Pipedrive)</span></h2>
+    <div class="scoreboard">
+      <div class="score-item green">
+        <div class="lbl">Contratos fechados</div>
+        <div class="val" id="score-contratos">0</div>
+      </div>
+      <div class="score-item accent">
+        <div class="lbl">Venda realizada</div>
+        <div class="val" id="score-venda">R$ 0</div>
+      </div>
+      <div class="score-item orange">
+        <div class="lbl">Caixa realizado</div>
+        <div class="val" id="score-caixa">R$ 0</div>
+      </div>
+    </div>
+  </div>
 
   <div class="card">
     <h2>Metas do mês</h2>
@@ -152,20 +213,35 @@
   </div>
 
   <div class="card">
-    <h2>Consolidado do time <span class="hint">— funil CC1 → FPQ → CC2 → CC3</span></h2>
+    <h2>Consolidado do time <span class="hint">— funil CC1 → FPQ → CC2 → CC3 → Contrato enviado → Fechado</span></h2>
     <div id="funnel-consolidado" class="funnel"></div>
   </div>
 
   <div class="card">
-    <h2>Comparativo entre closers</h2>
-    <div class="compare-charts">
-      <div>
-        <div class="pace-nums" style="margin-bottom:6px">Funil (CC1 / FPQ / CC2 / CC3)</div>
-        <div class="compare-chart-wrap"><canvas id="compareFunnelChart"></canvas></div>
+    <h2>Perdidos <span class="hint">— negócios perdidos no funil Studio Fiscal Franquia no mês</span></h2>
+    <div class="lost-summary">
+      <div class="item"><div class="v" id="lost-total">0</div><div class="l">Total perdidos</div></div>
+      <div class="item"><div class="v" id="lost-qualificadora">0</div><div class="l">Perdidos pela Qualificadora</div></div>
+      <div class="item"><div class="v" id="lost-repasse">0</div><div class="l">Perdidos após repasse ao closer</div></div>
+    </div>
+    <div class="lost-reasons" id="lost-reasons"></div>
+  </div>
+
+  <div class="card">
+    <h2>Comparativo entre closers <span class="hint">— funil individual de cada closer</span></h2>
+    <div class="compare-grid" id="compare-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>Ranking de campanhas e criativos <span class="hint">— por CC1 realizada no mês</span></h2>
+    <div class="ranking-grid">
+      <div class="ranking-block">
+        <h4>Campanhas (UTM campaign)</h4>
+        <div class="ranking-cols" id="ranking-campanhas"></div>
       </div>
-      <div>
-        <div class="pace-nums" style="margin-bottom:6px">Leads e contratos no mês</div>
-        <div class="compare-chart-wrap"><canvas id="compareLeadsChart"></canvas></div>
+      <div class="ranking-block">
+        <h4>Criativos (UTM content)</h4>
+        <div class="ranking-cols" id="ranking-criativos"></div>
       </div>
     </div>
   </div>
@@ -193,7 +269,7 @@
 </div>
 
 <script>
-const D = {"mes_label": "Julho 2026", "periodo_inicio": "2026-07-01", "periodo_fim": "2026-07-31", "gerado_em": "2026-07-02T11:34", "meta_contratos": 15, "meta_leads": 1500, "closers": [{"nome": "Leonardo Ribeiro", "foto": "https://usericons.pipedrive.com/profile_120x120_22760768_5329c507a3b64e959d03f5aea84e92a7.jpg", "cc1_realizada": 1, "cc1_futura": 15, "fpq_realizada": 1, "cc2_realizada": 0, "cc2_futura": 2, "cc3_realizada": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, {"nome": "Adalberto Neto", "foto": "https://usericons.pipedrive.com/profile_120x120_24688510_1a239cdc0558254144dce6bc90463a9a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}, {"nome": "Fred Garcia", "foto": "https://usericons.pipedrive.com/profile_120x120_23882023_7a0d02ab9e79475246f7e835ffbcd52a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 2, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, {"nome": "Luciana Issler", "foto": "https://usericons.pipedrive.com/profile_120x120_25500365_4489819785fd00c507f273ac2dbf8339.jpg", "cc1_realizada": 1, "cc1_futura": 0, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 1, "cc3_realizada": 1, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}], "consolidado": {"cc1_realizada": 6, "cc1_futura": 19, "fpq_realizada": 3, "cc2_realizada": 0, "cc2_futura": 11, "cc3_realizada": 1, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 50.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, "ritmo": {"dias_uteis_total": 23, "dias_uteis_passados": 2}, "pace": {"leads": {"label": "Leads", "meta": 1500, "estimado": false, "daily": {}, "ideal_cumulative": {"2026-07-01": 65.2, "2026-07-02": 130.4, "2026-07-03": 195.7, "2026-07-04": 195.7, "2026-07-05": 195.7, "2026-07-06": 260.9, "2026-07-07": 326.1, "2026-07-08": 391.3, "2026-07-09": 456.5, "2026-07-10": 521.7, "2026-07-11": 521.7, "2026-07-12": 521.7, "2026-07-13": 587.0, "2026-07-14": 652.2, "2026-07-15": 717.4, "2026-07-16": 782.6, "2026-07-17": 847.8, "2026-07-18": 847.8, "2026-07-19": 847.8, "2026-07-20": 913.0, "2026-07-21": 978.3, "2026-07-22": 1043.5, "2026-07-23": 1108.7, "2026-07-24": 1173.9, "2026-07-25": 1173.9, "2026-07-26": 1173.9, "2026-07-27": 1239.1, "2026-07-28": 1304.3, "2026-07-29": 1369.6, "2026-07-30": 1434.8, "2026-07-31": 1500.0}}, "cc1": {"label": "CC1 realizada", "meta": null, "estimado": true, "daily": {"2026-07-01": 5, "2026-07-02": 1}, "ideal_cumulative": {}}, "fpq": {"label": "FPQ recebida", "meta": null, "estimado": true, "daily": {"2026-07-01": 1, "2026-07-02": 2}, "ideal_cumulative": {}}, "cc2": {"label": "CC2 realizada", "meta": null, "estimado": true, "daily": {}, "ideal_cumulative": {}}, "cc3": {"label": "CC3 realizada", "meta": null, "estimado": true, "daily": {"2026-07-02": 1}, "ideal_cumulative": {}}, "contratos": {"label": "Contratos", "meta": 15, "estimado": false, "daily": {}, "ideal_cumulative": {"2026-07-01": 0.7, "2026-07-02": 1.3, "2026-07-03": 2.0, "2026-07-04": 2.0, "2026-07-05": 2.0, "2026-07-06": 2.6, "2026-07-07": 3.3, "2026-07-08": 3.9, "2026-07-09": 4.6, "2026-07-10": 5.2, "2026-07-11": 5.2, "2026-07-12": 5.2, "2026-07-13": 5.9, "2026-07-14": 6.5, "2026-07-15": 7.2, "2026-07-16": 7.8, "2026-07-17": 8.5, "2026-07-18": 8.5, "2026-07-19": 8.5, "2026-07-20": 9.1, "2026-07-21": 9.8, "2026-07-22": 10.4, "2026-07-23": 11.1, "2026-07-24": 11.7, "2026-07-25": 11.7, "2026-07-26": 11.7, "2026-07-27": 12.4, "2026-07-28": 13.0, "2026-07-29": 13.7, "2026-07-30": 14.3, "2026-07-31": 15.0}}}, "previsao": [{"data_registro": "2026-02-07", "closer": "Leonardo Ribeiro", "lead": "Rangel", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 35000, "data_fechamento_esperada": "2026-07-07", "status": "Avaliar pripostacom Yuri", "deal_id": 36020.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/36020", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "João Caldeira", "modelo": null, "bandeira": null, "venda": 50000, "caixa": 48250, "data_fechamento_esperada": "2026-07-06", "status": "Atualizar proposta", "deal_id": null, "deal_link": "joao_caldeira_lima@hotmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "Antonio Fernandes", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 31500, "data_fechamento_esperada": "2026-07-08", "status": "Definir data de inicio", "deal_id": null, "deal_link": "adm.afrf@gmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Fred Garcia", "lead": "FELIPE", "modelo": null, "bandeira": null, "venda": 90000, "caixa": 50000, "data_fechamento_esperada": "2026-07-25", "status": "CC3 A REALIZAR", "deal_id": 94494.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/94494", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}]};
+const D = {"mes_label": "Julho 2026", "periodo_inicio": "2026-07-01", "periodo_fim": "2026-07-31", "gerado_em": "2026-07-02T16:04", "meta_contratos": 15, "meta_leads": 1500, "closers": [{"nome": "Leonardo Ribeiro", "foto": "https://usericons.pipedrive.com/profile_120x120_22760768_5329c507a3b64e959d03f5aea84e92a7.jpg", "cc1_realizada": 1, "cc1_futura": 12, "fpq_realizada": 1, "cc2_realizada": 0, "cc2_futura": 2, "cc3_realizada": 0, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, {"nome": "Adalberto Neto", "foto": "https://usericons.pipedrive.com/profile_120x120_24688510_1a239cdc0558254144dce6bc90463a9a.jpg", "cc1_realizada": 2, "cc1_futura": 3, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 1, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}, {"nome": "Fred Garcia", "foto": "https://usericons.pipedrive.com/profile_120x120_23882023_7a0d02ab9e79475246f7e835ffbcd52a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 2, "cc2_realizada": 1, "cc2_futura": 2, "cc3_realizada": 0, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 50.0, "cc2_para_cc3": 0.0}}, {"nome": "Luciana Issler", "foto": "https://usericons.pipedrive.com/profile_120x120_25500365_4489819785fd00c507f273ac2dbf8339.jpg", "cc1_realizada": 1, "cc1_futura": 0, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 1, "cc3_realizada": 1, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}], "consolidado": {"cc1_realizada": 6, "cc1_futura": 17, "fpq_realizada": 3, "cc2_realizada": 1, "cc2_futura": 9, "cc3_realizada": 2, "contrato_enviado": 0, "leads": 62, "contratos": 0, "conversao": {"cc1_para_fpq": 50.0, "fpq_para_cc2": 33.3, "cc2_para_cc3": 200.0}, "leads_funil": 62, "leads_atribuidos_closers": 0}, "ritmo": {"dias_uteis_total": 23, "dias_uteis_passados": 2}, "pace": {"leads": {"label": "Leads", "meta": 1500, "estimado": false, "daily": {"2026-07-02": 38, "2026-07-01": 24}, "ideal_cumulative": {"2026-07-01": 65.2, "2026-07-02": 130.4, "2026-07-03": 195.7, "2026-07-04": 195.7, "2026-07-05": 195.7, "2026-07-06": 260.9, "2026-07-07": 326.1, "2026-07-08": 391.3, "2026-07-09": 456.5, "2026-07-10": 521.7, "2026-07-11": 521.7, "2026-07-12": 521.7, "2026-07-13": 587.0, "2026-07-14": 652.2, "2026-07-15": 717.4, "2026-07-16": 782.6, "2026-07-17": 847.8, "2026-07-18": 847.8, "2026-07-19": 847.8, "2026-07-20": 913.0, "2026-07-21": 978.3, "2026-07-22": 1043.5, "2026-07-23": 1108.7, "2026-07-24": 1173.9, "2026-07-25": 1173.9, "2026-07-26": 1173.9, "2026-07-27": 1239.1, "2026-07-28": 1304.3, "2026-07-29": 1369.6, "2026-07-30": 1434.8, "2026-07-31": 1500.0}}, "cc1": {"label": "CC1 realizada", "meta": 145, "estimado": true, "daily": {"2026-07-01": 5, "2026-07-02": 1}, "ideal_cumulative": {"2026-07-01": 6.3, "2026-07-02": 12.6, "2026-07-03": 18.9, "2026-07-04": 18.9, "2026-07-05": 18.9, "2026-07-06": 25.2, "2026-07-07": 31.5, "2026-07-08": 37.8, "2026-07-09": 44.1, "2026-07-10": 50.4, "2026-07-11": 50.4, "2026-07-12": 50.4, "2026-07-13": 56.7, "2026-07-14": 63.0, "2026-07-15": 69.3, "2026-07-16": 75.7, "2026-07-17": 82.0, "2026-07-18": 82.0, "2026-07-19": 82.0, "2026-07-20": 88.3, "2026-07-21": 94.6, "2026-07-22": 100.9, "2026-07-23": 107.2, "2026-07-24": 113.5, "2026-07-25": 113.5, "2026-07-26": 113.5, "2026-07-27": 119.8, "2026-07-28": 126.1, "2026-07-29": 132.4, "2026-07-30": 138.7, "2026-07-31": 145.0}}, "fpq": {"label": "FPQ recebida", "meta": 72, "estimado": true, "daily": {"2026-07-02": 2, "2026-07-01": 1}, "ideal_cumulative": {"2026-07-01": 3.1, "2026-07-02": 6.3, "2026-07-03": 9.4, "2026-07-04": 9.4, "2026-07-05": 9.4, "2026-07-06": 12.5, "2026-07-07": 15.7, "2026-07-08": 18.8, "2026-07-09": 21.9, "2026-07-10": 25.0, "2026-07-11": 25.0, "2026-07-12": 25.0, "2026-07-13": 28.2, "2026-07-14": 31.3, "2026-07-15": 34.4, "2026-07-16": 37.6, "2026-07-17": 40.7, "2026-07-18": 40.7, "2026-07-19": 40.7, "2026-07-20": 43.8, "2026-07-21": 47.0, "2026-07-22": 50.1, "2026-07-23": 53.2, "2026-07-24": 56.3, "2026-07-25": 56.3, "2026-07-26": 56.3, "2026-07-27": 59.5, "2026-07-28": 62.6, "2026-07-29": 65.7, "2026-07-30": 68.9, "2026-07-31": 72.0}}, "cc2": {"label": "CC2 realizada", "meta": 24, "estimado": true, "daily": {"2026-07-02": 1}, "ideal_cumulative": {"2026-07-01": 1.0, "2026-07-02": 2.1, "2026-07-03": 3.1, "2026-07-04": 3.1, "2026-07-05": 3.1, "2026-07-06": 4.2, "2026-07-07": 5.2, "2026-07-08": 6.3, "2026-07-09": 7.3, "2026-07-10": 8.3, "2026-07-11": 8.3, "2026-07-12": 8.3, "2026-07-13": 9.4, "2026-07-14": 10.4, "2026-07-15": 11.5, "2026-07-16": 12.5, "2026-07-17": 13.6, "2026-07-18": 13.6, "2026-07-19": 13.6, "2026-07-20": 14.6, "2026-07-21": 15.7, "2026-07-22": 16.7, "2026-07-23": 17.7, "2026-07-24": 18.8, "2026-07-25": 18.8, "2026-07-26": 18.8, "2026-07-27": 19.8, "2026-07-28": 20.9, "2026-07-29": 21.9, "2026-07-30": 23.0, "2026-07-31": 24.0}}, "cc3": {"label": "CC3 realizada", "meta": 48, "estimado": true, "daily": {"2026-07-02": 2}, "ideal_cumulative": {"2026-07-01": 2.1, "2026-07-02": 4.2, "2026-07-03": 6.3, "2026-07-04": 6.3, "2026-07-05": 6.3, "2026-07-06": 8.3, "2026-07-07": 10.4, "2026-07-08": 12.5, "2026-07-09": 14.6, "2026-07-10": 16.7, "2026-07-11": 16.7, "2026-07-12": 16.7, "2026-07-13": 18.8, "2026-07-14": 20.9, "2026-07-15": 23.0, "2026-07-16": 25.0, "2026-07-17": 27.1, "2026-07-18": 27.1, "2026-07-19": 27.1, "2026-07-20": 29.2, "2026-07-21": 31.3, "2026-07-22": 33.4, "2026-07-23": 35.5, "2026-07-24": 37.6, "2026-07-25": 37.6, "2026-07-26": 37.6, "2026-07-27": 39.7, "2026-07-28": 41.7, "2026-07-29": 43.8, "2026-07-30": 45.9, "2026-07-31": 48.0}}, "contrato_enviado": {"label": "Contrato enviado", "meta": null, "estimado": true, "daily": {}, "ideal_cumulative": {}}, "contratos": {"label": "Contratos fechados", "meta": 15, "estimado": false, "daily": {}, "ideal_cumulative": {"2026-07-01": 0.7, "2026-07-02": 1.3, "2026-07-03": 2.0, "2026-07-04": 2.0, "2026-07-05": 2.0, "2026-07-06": 2.6, "2026-07-07": 3.3, "2026-07-08": 3.9, "2026-07-09": 4.6, "2026-07-10": 5.2, "2026-07-11": 5.2, "2026-07-12": 5.2, "2026-07-13": 5.9, "2026-07-14": 6.5, "2026-07-15": 7.2, "2026-07-16": 7.8, "2026-07-17": 8.5, "2026-07-18": 8.5, "2026-07-19": 8.5, "2026-07-20": 9.1, "2026-07-21": 9.8, "2026-07-22": 10.4, "2026-07-23": 11.1, "2026-07-24": 11.7, "2026-07-25": 11.7, "2026-07-26": 11.7, "2026-07-27": 12.4, "2026-07-28": 13.0, "2026-07-29": 13.7, "2026-07-30": 14.3, "2026-07-31": 15.0}}}, "perdidos": {"total": 26, "pela_qualificadora": 26, "apos_repasse": 0, "por_motivo": [{"motivo": "Sem perfil", "total": 16}, {"motivo": "Sem Retorno", "total": 4}, {"motivo": "Sem interesse", "total": 2}, {"motivo": "Sem Contato", "total": 2}, {"motivo": "Não informado", "total": 1}, {"motivo": "Perfil Fake", "total": 1}]}, "ranking": {"campanhas": {"melhores": [{"nome": "FF - GS PARTNER [Formulario Direto][ABO]", "leads": 2, "cc1": 2, "conversao": 100.0}, {"nome": "[LEAD][ABO][FORM NATIVO] [CONSULTOR]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "search_studio_agro", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "ABO [FORMULARIO DIRETO][FRANQUIA]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "[FORMULARIO DIRETO] [ABO] [25]", "leads": 0, "cc1": 1, "conversao": null}], "piores": [{"nome": "[LEAD][ABO][CONVERSÃO [3_ICP]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][FORM NATIVO] [ADVOGADOS] [02]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][FORM NATIVO] [LISTA LAL E-BOOK] [2]", "leads": 6, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][LAL QUENTES PIPE]", "leads": 14, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD] FORMS_NATIVO] [ESCALA] [LISTA GS]", "leads": 15, "cc1": 0, "conversao": 0.0}]}, "criativos": {"melhores": [{"nome": "[AGRO] [BR] [25-60]", "leads": 2, "cc1": 2, "conversao": 100.0}, {"nome": "03 - [CONSULTORIA AGRO]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "02 - [CONT + AGRONEGOCIO][25-60]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "PS [ADV]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "franquia", "leads": 0, "cc1": 1, "conversao": null}], "piores": [{"nome": "[LAL 1% LAL1% Leads quentes - Pipe] 2", "leads": 4, "cc1": 0, "conversao": 0.0}, {"nome": "[ADVOGADOS][27-60][BR]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LAL 1% LAL1% Leads quentes - Pipe]", "leads": 10, "cc1": 0, "conversao": 0.0}, {"nome": "[ADVOGADO][28-60][BR]", "leads": 8, "cc1": 0, "conversao": 0.0}, {"nome": "[LISTA LAL E-BOOK] ][27-60][BR]", "leads": 6, "cc1": 0, "conversao": 0.0}]}}, "scoreboard": {"contratos_fechados": 0, "venda_realizada_total": 0, "caixa_realizado_total": 0}, "previsao": [{"data_registro": "2026-02-07", "closer": "Leonardo Ribeiro", "lead": "Rangel", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 35000, "data_fechamento_esperada": "2026-07-07", "status": "Avaliar pripostacom Yuri", "deal_id": 36020.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/36020", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "João Caldeira", "modelo": null, "bandeira": null, "venda": 50000, "caixa": 48250, "data_fechamento_esperada": "2026-07-06", "status": "Atualizar proposta", "deal_id": null, "deal_link": "joao_caldeira_lima@hotmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "Antonio Fernandes", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 31500, "data_fechamento_esperada": "2026-07-08", "status": "Definir data de inicio", "deal_id": null, "deal_link": "adm.afrf@gmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Fred Garcia", "lead": "FELIPE", "modelo": null, "bandeira": null, "venda": 90000, "caixa": 50000, "data_fechamento_esperada": "2026-07-25", "status": "CC3 A REALIZAR", "deal_id": 94494.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/94494", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}]};
 
 function fmtMoney(v) {
   if (v === null || v === undefined || isNaN(v)) return '—';
@@ -208,6 +284,11 @@ function pctStr(v) { return (v === null || v === undefined) ? '—' : v + '%'; }
 
 document.getElementById('subtitle').textContent =
   `${D.mes_label} · ${fmtDate(D.periodo_inicio)} a ${fmtDate(D.periodo_fim)} · atualizado em ${D.gerado_em.replace('T',' ')}`;
+
+// ===== Placar (planilha de previsão) =====
+document.getElementById('score-contratos').textContent = D.scoreboard.contratos_fechados;
+document.getElementById('score-venda').textContent = fmtMoney(D.scoreboard.venda_realizada_total);
+document.getElementById('score-caixa').textContent = fmtMoney(D.scoreboard.caixa_realizado_total);
 
 // ===== Datas do mês (usado pelo pace e pelos gráficos) =====
 const MONTH_DATES = (function() {
@@ -258,18 +339,26 @@ setStatus('meta-contratos-status', 'contratos');
 
 // ===== Pace por indicador =====
 const PACE_COLORS = {
-  leads: '#a855f7', cc1: '#22c55e', fpq: '#eab308', cc2: '#3b82f6', cc3: '#ef4444', contratos: '#f97316',
+  leads: '#a855f7', cc1: '#22c55e', fpq: '#eab308', cc2: '#3b82f6', cc3: '#ef4444',
+  contrato_enviado: '#06b6d4', contratos: '#f97316',
 };
 const paceLabels = MONTH_DATES.map(iso => iso.slice(8, 10) + '/' + iso.slice(5, 7));
-document.getElementById('pace-grid').innerHTML = Object.keys(D.pace).map(key => `
+document.getElementById('pace-grid').innerHTML = Object.keys(D.pace).map(key => {
+  const color = PACE_COLORS[key] || '#3b82f6';
+  return `
   <div class="pace-card">
     <div class="pace-head">
       <div class="pace-title">${D.pace[key].label}${D.pace[key].estimado ? '<span class="pace-tag">estimado</span>' : ''}</div>
       <div class="pace-nums"><b>${D.consolidado[key] ?? 0}</b> ${D.pace[key].meta ? '/ ' + D.pace[key].meta : ''}</div>
     </div>
+    <div class="pace-legend">
+      <span><i class="sw" style="border-top-color:${color}"></i>Realizado</span>
+      <span><i class="sw dash"></i>Ideal</span>
+    </div>
     <div class="pace-chart"><canvas id="pace-canvas-${key}"></canvas></div>
   </div>
-`).join('');
+`;
+}).join('');
 
 Object.keys(D.pace).forEach(key => {
   const p = D.pace[key];
@@ -277,10 +366,10 @@ Object.keys(D.pace).forEach(key => {
   const real = cumulativeFromDaily(p.daily);
   const ideal = p.meta ? MONTH_DATES.map(iso => p.ideal_cumulative[iso] ?? null) : [];
   const datasets = [
-    { label: 'Realizado', data: real, borderColor: color, backgroundColor: color + '33', tension: .3, pointRadius: 0 },
+    { label: 'Realizado', data: real, borderColor: color, backgroundColor: color + '33', tension: .3, pointRadius: 0, fill: true },
   ];
   if (p.meta) {
-    datasets.push({ label: 'Ideal', data: ideal, borderColor: '#94a3b8', borderDash: [5, 4], pointRadius: 0, tension: 0 });
+    datasets.push({ label: 'Ideal', data: ideal, borderColor: '#94a3b8', borderDash: [5, 4], pointRadius: 0, tension: 0, fill: false });
   }
   new Chart(document.getElementById(`pace-canvas-${key}`), {
     type: 'line',
@@ -296,14 +385,19 @@ Object.keys(D.pace).forEach(key => {
   });
 });
 
-// ===== Funil consolidado =====
-function renderFunnel(elId, m) {
-  const stages = [
+// ===== Funil (consolidado e por closer) =====
+function funnelStages(m) {
+  return [
     ['CC1 realizada', m.cc1_realizada, null],
     ['FPQ recebida', m.fpq_realizada, m.conversao.cc1_para_fpq],
     ['CC2 realizada', m.cc2_realizada, m.conversao.fpq_para_cc2],
     ['CC3 realizada', m.cc3_realizada, m.conversao.cc2_para_cc3],
+    ['Contrato enviado', m.contrato_enviado, null],
+    ['Fechados (Ganho)', m.contratos, null],
   ];
+}
+function renderFunnel(elId, m) {
+  const stages = funnelStages(m);
   const max = Math.max(1, ...stages.map(s => s[1]));
   const el = document.getElementById(elId);
   el.innerHTML = stages.map(([label, val, conv]) => `
@@ -317,49 +411,52 @@ function renderFunnel(elId, m) {
 }
 renderFunnel('funnel-consolidado', D.consolidado);
 
-// ===== Comparativo entre closers =====
-(function() {
-  const names = D.closers.map(c => c.nome);
-  new Chart(document.getElementById('compareFunnelChart'), {
-    type: 'bar',
-    data: {
-      labels: names,
-      datasets: [
-        { label: 'CC1 realizada', data: D.closers.map(c => c.cc1_realizada), backgroundColor: '#22c55e' },
-        { label: 'FPQ recebida', data: D.closers.map(c => c.fpq_realizada), backgroundColor: '#eab308' },
-        { label: 'CC2 realizada', data: D.closers.map(c => c.cc2_realizada), backgroundColor: '#3b82f6' },
-        { label: 'CC3 realizada', data: D.closers.map(c => c.cc3_realizada), backgroundColor: '#ef4444' },
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#e2e8f0' } } },
-      scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-        y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: '#22304a' } },
-      }
-    }
-  });
+// ===== Perdidos =====
+document.getElementById('lost-total').textContent = D.perdidos.total;
+document.getElementById('lost-qualificadora').textContent = D.perdidos.pela_qualificadora;
+document.getElementById('lost-repasse').textContent = D.perdidos.apos_repasse;
+const lostMax = Math.max(1, ...D.perdidos.por_motivo.map(m => m.total));
+document.getElementById('lost-reasons').innerHTML = D.perdidos.por_motivo.length
+  ? D.perdidos.por_motivo.map(m => `
+      <div class="lost-reason-row">
+        <div class="l">${m.motivo}</div>
+        <div class="lost-reason-track"><div class="lost-reason-fill" style="width:${100 * m.total / lostMax}%"></div></div>
+        <div class="v">${m.total}</div>
+      </div>
+    `).join('')
+  : '<div style="color:var(--text-dim);font-size:13px">Nenhum perdido no mês.</div>';
 
-  new Chart(document.getElementById('compareLeadsChart'), {
-    type: 'bar',
-    data: {
-      labels: names,
-      datasets: [
-        { label: 'Leads', data: D.closers.map(c => c.leads), backgroundColor: '#a855f7' },
-        { label: 'Contratos', data: D.closers.map(c => c.contratos), backgroundColor: '#f97316' },
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#e2e8f0' } } },
-      scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-        y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: '#22304a' } },
-      }
-    }
-  });
-})();
+// ===== Comparativo entre closers (funil individual, mesma linguagem visual do consolidado) =====
+document.getElementById('compare-grid').innerHTML = D.closers.map((c, i) => `
+  <div class="compare-card">
+    <div class="name">${c.nome}</div>
+    <div class="funnel" id="compare-funnel-${i}"></div>
+    <div class="compare-kpis">
+      <div class="m"><div class="v">${c.leads}</div><div class="l">Leads</div></div>
+      <div class="m"><div class="v">${pctStr(c.conversao.cc1_para_fpq)}</div><div class="l">CC1→FPQ</div></div>
+      <div class="m"><div class="v">${pctStr(c.conversao.cc2_para_cc3)}</div><div class="l">CC2→CC3</div></div>
+    </div>
+  </div>
+`).join('');
+D.closers.forEach((c, i) => renderFunnel(`compare-funnel-${i}`, c));
+
+// ===== Ranking campanhas / criativos =====
+function rkRow(i) {
+  return `
+    <div class="rk-row">
+      <div class="rk-name" title="${i.nome}">${i.nome}</div>
+      <div class="rk-nums">${i.cc1} CC1 · ${i.leads} leads${i.conversao !== null ? ' · conv. ' + i.conversao + '%' : ''}</div>
+    </div>`;
+}
+function rkList(items, cls, title) {
+  return `<div class="ranking-list ${cls}"><div class="rk-title">${title}</div>${
+    items.length ? items.map(rkRow).join('') : '<div style="color:var(--text-dim);font-size:12px">Sem dados suficientes</div>'
+  }</div>`;
+}
+document.getElementById('ranking-campanhas').innerHTML =
+  rkList(D.ranking.campanhas.melhores, 'best', 'Melhores') + rkList(D.ranking.campanhas.piores, 'worst', 'Piores');
+document.getElementById('ranking-criativos').innerHTML =
+  rkList(D.ranking.criativos.melhores, 'best', 'Melhores') + rkList(D.ranking.criativos.piores, 'worst', 'Piores');
 
 // ===== Closers =====
 document.getElementById('closers-grid').innerHTML = D.closers.map(c => `
@@ -378,6 +475,8 @@ document.getElementById('closers-grid').innerHTML = D.closers.map(c => `
       <div class="m"><div class="v">${c.cc2_realizada}</div><div class="l">CC2 realizada</div></div>
       <div class="m"><div class="v">${c.cc2_futura}</div><div class="l">CC2 a acontecer</div></div>
       <div class="m"><div class="v">${c.cc3_realizada}</div><div class="l">CC3 realizada</div></div>
+      <div class="m"><div class="v">${c.contrato_enviado}</div><div class="l">Contrato enviado</div></div>
+      <div class="m"><div class="v">${c.contratos}</div><div class="l">Fechados (Ganho)</div></div>
     </div>
     <div class="closer-conv">
       <div>CC1→FPQ <b>${pctStr(c.conversao.cc1_para_fpq)}</b></div>
