@@ -144,6 +144,21 @@
   .closer-conv { margin-top: 10px; font-size: 12px; color: var(--text-dim); display: flex; gap: 14px; flex-wrap: wrap; }
   .closer-conv b { color: var(--green); }
 
+  /* ===== Relatório por closer ===== */
+  .relatorio-card + .relatorio-card { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .relatorio-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .relatorio-head img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+  .relatorio-head .name { font-weight: 700; font-size: 15px; margin-right: auto; }
+  .relatorio-tabs { display: flex; gap: 6px; }
+  .relatorio-tabs .rtab {
+    background: var(--card-hi); border: 1px solid var(--border); color: var(--text-dim);
+    font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .relatorio-tabs .rtab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .relatorio-table-wrap { max-height: 340px; overflow-y: auto; }
+  .relatorio-table-wrap table th, .relatorio-table-wrap table td { font-size: 12px; padding: 6px 10px; white-space: nowrap; }
+  .relatorio-table-wrap table th:first-child, .relatorio-table-wrap table td:first-child { position: sticky; left: 0; background: var(--card-hi); }
+
   /* ===== Tabela previsão ===== */
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
@@ -263,6 +278,11 @@
   </div>
 
   <div class="card">
+    <h2>Relatório por closer <span class="hint">— diário, semanal e consolidado do mês</span></h2>
+    <div id="relatorio-closers"></div>
+  </div>
+
+  <div class="card">
     <h2>Previsão <span class="hint">— preenchida manualmente pelo time (planilha)</span></h2>
     <div style="overflow-x:auto">
       <table id="previsao-table">
@@ -280,7 +300,7 @@
 </div>
 
 <script>
-const D = {"mes_label": "Julho 2026", "periodo_inicio": "2026-07-01", "periodo_fim": "2026-07-31", "gerado_em": "2026-07-02T16:08", "meta_contratos": 15, "meta_leads": 1500, "closers": [{"nome": "Leonardo Ribeiro", "foto": "https://usericons.pipedrive.com/profile_120x120_22760768_5329c507a3b64e959d03f5aea84e92a7.jpg", "cc1_realizada": 1, "cc1_futura": 12, "fpq_realizada": 1, "cc2_realizada": 0, "cc2_futura": 2, "cc3_realizada": 0, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}}, {"nome": "Adalberto Neto", "foto": "https://usericons.pipedrive.com/profile_120x120_24688510_1a239cdc0558254144dce6bc90463a9a.jpg", "cc1_realizada": 2, "cc1_futura": 3, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 1, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}, {"nome": "Fred Garcia", "foto": "https://usericons.pipedrive.com/profile_120x120_23882023_7a0d02ab9e79475246f7e835ffbcd52a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 2, "cc2_realizada": 1, "cc2_futura": 2, "cc3_realizada": 0, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 50.0, "cc2_para_cc3": 0.0}}, {"nome": "Luciana Issler", "foto": "https://usericons.pipedrive.com/profile_120x120_25500365_4489819785fd00c507f273ac2dbf8339.jpg", "cc1_realizada": 1, "cc1_futura": 0, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 1, "cc3_realizada": 1, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}}], "consolidado": {"cc1_realizada": 6, "cc1_futura": 17, "fpq_realizada": 3, "cc2_realizada": 1, "cc2_futura": 9, "cc3_realizada": 2, "contrato_enviado": 0, "leads": 62, "contratos": 0, "conversao": {"cc1_para_fpq": 50.0, "fpq_para_cc2": 33.3, "cc2_para_cc3": 200.0}, "leads_funil": 62, "leads_atribuidos_closers": 0}, "ritmo": {"dias_uteis_total": 23, "dias_uteis_passados": 2}, "pace": {"leads": {"label": "Leads", "meta": 1500, "estimado": false, "daily": {"2026-07-02": 38, "2026-07-01": 24}, "ideal_cumulative": {"2026-07-01": 65.2, "2026-07-02": 130.4, "2026-07-03": 195.7, "2026-07-04": 195.7, "2026-07-05": 195.7, "2026-07-06": 260.9, "2026-07-07": 326.1, "2026-07-08": 391.3, "2026-07-09": 456.5, "2026-07-10": 521.7, "2026-07-11": 521.7, "2026-07-12": 521.7, "2026-07-13": 587.0, "2026-07-14": 652.2, "2026-07-15": 717.4, "2026-07-16": 782.6, "2026-07-17": 847.8, "2026-07-18": 847.8, "2026-07-19": 847.8, "2026-07-20": 913.0, "2026-07-21": 978.3, "2026-07-22": 1043.5, "2026-07-23": 1108.7, "2026-07-24": 1173.9, "2026-07-25": 1173.9, "2026-07-26": 1173.9, "2026-07-27": 1239.1, "2026-07-28": 1304.3, "2026-07-29": 1369.6, "2026-07-30": 1434.8, "2026-07-31": 1500.0}}, "cc1": {"label": "CC1 realizada", "meta": 145, "estimado": true, "daily": {"2026-07-01": 5, "2026-07-02": 1}, "ideal_cumulative": {"2026-07-01": 6.3, "2026-07-02": 12.6, "2026-07-03": 18.9, "2026-07-04": 18.9, "2026-07-05": 18.9, "2026-07-06": 25.2, "2026-07-07": 31.5, "2026-07-08": 37.8, "2026-07-09": 44.1, "2026-07-10": 50.4, "2026-07-11": 50.4, "2026-07-12": 50.4, "2026-07-13": 56.7, "2026-07-14": 63.0, "2026-07-15": 69.3, "2026-07-16": 75.7, "2026-07-17": 82.0, "2026-07-18": 82.0, "2026-07-19": 82.0, "2026-07-20": 88.3, "2026-07-21": 94.6, "2026-07-22": 100.9, "2026-07-23": 107.2, "2026-07-24": 113.5, "2026-07-25": 113.5, "2026-07-26": 113.5, "2026-07-27": 119.8, "2026-07-28": 126.1, "2026-07-29": 132.4, "2026-07-30": 138.7, "2026-07-31": 145.0}}, "fpq": {"label": "FPQ recebida", "meta": 72, "estimado": true, "daily": {"2026-07-02": 2, "2026-07-01": 1}, "ideal_cumulative": {"2026-07-01": 3.1, "2026-07-02": 6.3, "2026-07-03": 9.4, "2026-07-04": 9.4, "2026-07-05": 9.4, "2026-07-06": 12.5, "2026-07-07": 15.7, "2026-07-08": 18.8, "2026-07-09": 21.9, "2026-07-10": 25.0, "2026-07-11": 25.0, "2026-07-12": 25.0, "2026-07-13": 28.2, "2026-07-14": 31.3, "2026-07-15": 34.4, "2026-07-16": 37.6, "2026-07-17": 40.7, "2026-07-18": 40.7, "2026-07-19": 40.7, "2026-07-20": 43.8, "2026-07-21": 47.0, "2026-07-22": 50.1, "2026-07-23": 53.2, "2026-07-24": 56.3, "2026-07-25": 56.3, "2026-07-26": 56.3, "2026-07-27": 59.5, "2026-07-28": 62.6, "2026-07-29": 65.7, "2026-07-30": 68.9, "2026-07-31": 72.0}}, "cc2": {"label": "CC2 realizada", "meta": 24, "estimado": true, "daily": {"2026-07-02": 1}, "ideal_cumulative": {"2026-07-01": 1.0, "2026-07-02": 2.1, "2026-07-03": 3.1, "2026-07-04": 3.1, "2026-07-05": 3.1, "2026-07-06": 4.2, "2026-07-07": 5.2, "2026-07-08": 6.3, "2026-07-09": 7.3, "2026-07-10": 8.3, "2026-07-11": 8.3, "2026-07-12": 8.3, "2026-07-13": 9.4, "2026-07-14": 10.4, "2026-07-15": 11.5, "2026-07-16": 12.5, "2026-07-17": 13.6, "2026-07-18": 13.6, "2026-07-19": 13.6, "2026-07-20": 14.6, "2026-07-21": 15.7, "2026-07-22": 16.7, "2026-07-23": 17.7, "2026-07-24": 18.8, "2026-07-25": 18.8, "2026-07-26": 18.8, "2026-07-27": 19.8, "2026-07-28": 20.9, "2026-07-29": 21.9, "2026-07-30": 23.0, "2026-07-31": 24.0}}, "cc3": {"label": "CC3 realizada", "meta": 48, "estimado": true, "daily": {"2026-07-02": 2}, "ideal_cumulative": {"2026-07-01": 2.1, "2026-07-02": 4.2, "2026-07-03": 6.3, "2026-07-04": 6.3, "2026-07-05": 6.3, "2026-07-06": 8.3, "2026-07-07": 10.4, "2026-07-08": 12.5, "2026-07-09": 14.6, "2026-07-10": 16.7, "2026-07-11": 16.7, "2026-07-12": 16.7, "2026-07-13": 18.8, "2026-07-14": 20.9, "2026-07-15": 23.0, "2026-07-16": 25.0, "2026-07-17": 27.1, "2026-07-18": 27.1, "2026-07-19": 27.1, "2026-07-20": 29.2, "2026-07-21": 31.3, "2026-07-22": 33.4, "2026-07-23": 35.5, "2026-07-24": 37.6, "2026-07-25": 37.6, "2026-07-26": 37.6, "2026-07-27": 39.7, "2026-07-28": 41.7, "2026-07-29": 43.8, "2026-07-30": 45.9, "2026-07-31": 48.0}}, "contrato_enviado": {"label": "Contrato enviado", "meta": null, "estimado": true, "daily": {}, "ideal_cumulative": {}}, "contratos": {"label": "Contratos fechados", "meta": 15, "estimado": false, "daily": {}, "ideal_cumulative": {"2026-07-01": 0.7, "2026-07-02": 1.3, "2026-07-03": 2.0, "2026-07-04": 2.0, "2026-07-05": 2.0, "2026-07-06": 2.6, "2026-07-07": 3.3, "2026-07-08": 3.9, "2026-07-09": 4.6, "2026-07-10": 5.2, "2026-07-11": 5.2, "2026-07-12": 5.2, "2026-07-13": 5.9, "2026-07-14": 6.5, "2026-07-15": 7.2, "2026-07-16": 7.8, "2026-07-17": 8.5, "2026-07-18": 8.5, "2026-07-19": 8.5, "2026-07-20": 9.1, "2026-07-21": 9.8, "2026-07-22": 10.4, "2026-07-23": 11.1, "2026-07-24": 11.7, "2026-07-25": 11.7, "2026-07-26": 11.7, "2026-07-27": 12.4, "2026-07-28": 13.0, "2026-07-29": 13.7, "2026-07-30": 14.3, "2026-07-31": 15.0}}}, "perdidos": {"total": 26, "pela_qualificadora": 26, "apos_repasse": 0, "por_motivo": [{"motivo": "Sem perfil", "total": 16}, {"motivo": "Sem Retorno", "total": 4}, {"motivo": "Sem interesse", "total": 2}, {"motivo": "Sem Contato", "total": 2}, {"motivo": "Não informado", "total": 1}, {"motivo": "Perfil Fake", "total": 1}]}, "ranking": {"campanhas": {"melhores": [{"nome": "FF - GS PARTNER [Formulario Direto][ABO]", "leads": 2, "cc1": 2, "conversao": 100.0}, {"nome": "ABO [FORMULARIO DIRETO][FRANQUIA]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "search_studio_agro", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "[LEAD][ABO][FORM NATIVO] [CONSULTOR]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "[FORMULARIO DIRETO] [ABO] [25]", "leads": 0, "cc1": 1, "conversao": null}], "piores": [{"nome": "[LEAD][ABO][FORM NATIVO] [ADVOGADOS] [02]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][FORM NATIVO] [LISTA LAL E-BOOK] [2]", "leads": 6, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][CONVERSÃO [3_ICP]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD] FORMS_NATIVO] [ESCALA] [LISTA GS]", "leads": 15, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][LAL QUENTES PIPE]", "leads": 14, "cc1": 0, "conversao": 0.0}]}, "criativos": {"melhores": [{"nome": "[AGRO] [BR] [25-60]", "leads": 2, "cc1": 2, "conversao": 100.0}, {"nome": "franquia", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "PS [ADV]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "02 - [CONT + AGRONEGOCIO][25-60]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "03 - [CONSULTORIA AGRO]", "leads": 0, "cc1": 1, "conversao": null}], "piores": [{"nome": "[ADVOGADOS][27-60][BR]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[ADVOGADO][28-60][BR]", "leads": 8, "cc1": 0, "conversao": 0.0}, {"nome": "[LAL 1% LAL1% Leads quentes - Pipe] 2", "leads": 4, "cc1": 0, "conversao": 0.0}, {"nome": "[LAL 1% LAL1% Leads quentes - Pipe]", "leads": 10, "cc1": 0, "conversao": 0.0}, {"nome": "[LISTA LAL E-BOOK] ][27-60][BR]", "leads": 6, "cc1": 0, "conversao": 0.0}]}}, "scoreboard": {"contratos_fechados": 0, "venda_realizada_total": 0, "caixa_realizado_total": 0}, "previsao": [{"data_registro": "2026-02-07", "closer": "Leonardo Ribeiro", "lead": "Rangel", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 35000, "data_fechamento_esperada": "2026-07-07", "status": "Avaliar pripostacom Yuri", "deal_id": 36020.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/36020", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "João Caldeira", "modelo": null, "bandeira": null, "venda": 50000, "caixa": 48250, "data_fechamento_esperada": "2026-07-06", "status": "Atualizar proposta", "deal_id": null, "deal_link": "joao_caldeira_lima@hotmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "Antonio Fernandes", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 31500, "data_fechamento_esperada": "2026-07-08", "status": "Definir data de inicio", "deal_id": null, "deal_link": "adm.afrf@gmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Fred Garcia", "lead": "FELIPE", "modelo": null, "bandeira": null, "venda": 90000, "caixa": 50000, "data_fechamento_esperada": "2026-07-25", "status": "CC3 A REALIZAR", "deal_id": 94494.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/94494", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}]};
+const D = {"mes_label": "Julho 2026", "periodo_inicio": "2026-07-01", "periodo_fim": "2026-07-31", "gerado_em": "2026-07-02T17:29", "meta_contratos": 15, "meta_leads": 1500, "closers": [{"nome": "Leonardo Ribeiro", "foto": "https://usericons.pipedrive.com/profile_120x120_22760768_5329c507a3b64e959d03f5aea84e92a7.jpg", "cc1_realizada": 1, "cc1_futura": 12, "fpq_realizada": 1, "cc2_realizada": 0, "cc2_futura": 2, "cc3_realizada": 0, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 0.0, "cc2_para_cc3": null}, "diario": {"leads": {}, "cc1_realizada": {"2026-07-01": 1}, "fpq_realizada": {"2026-07-02": 1}, "cc2_realizada": {}, "cc3_realizada": {}, "contrato_enviado": {}, "contratos": {}}}, {"nome": "Adalberto Neto", "foto": "https://usericons.pipedrive.com/profile_120x120_24688510_1a239cdc0558254144dce6bc90463a9a.jpg", "cc1_realizada": 2, "cc1_futura": 3, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 4, "cc3_realizada": 1, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}, "diario": {"leads": {}, "cc1_realizada": {"2026-07-01": 2}, "fpq_realizada": {}, "cc2_realizada": {}, "cc3_realizada": {"2026-07-02": 1}, "contrato_enviado": {}, "contratos": {}}}, {"nome": "Fred Garcia", "foto": "https://usericons.pipedrive.com/profile_120x120_23882023_7a0d02ab9e79475246f7e835ffbcd52a.jpg", "cc1_realizada": 2, "cc1_futura": 2, "fpq_realizada": 2, "cc2_realizada": 1, "cc2_futura": 2, "cc3_realizada": 0, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 100.0, "fpq_para_cc2": 50.0, "cc2_para_cc3": 0.0}, "diario": {"leads": {}, "cc1_realizada": {"2026-07-01": 1, "2026-07-02": 1}, "fpq_realizada": {"2026-07-01": 1, "2026-07-02": 1}, "cc2_realizada": {"2026-07-02": 1}, "cc3_realizada": {}, "contrato_enviado": {}, "contratos": {}}}, {"nome": "Luciana Issler", "foto": "https://usericons.pipedrive.com/profile_120x120_25500365_4489819785fd00c507f273ac2dbf8339.jpg", "cc1_realizada": 1, "cc1_futura": 0, "fpq_realizada": 0, "cc2_realizada": 0, "cc2_futura": 1, "cc3_realizada": 1, "contrato_enviado": 0, "leads": 0, "contratos": 0, "conversao": {"cc1_para_fpq": 0.0, "fpq_para_cc2": null, "cc2_para_cc3": null}, "diario": {"leads": {}, "cc1_realizada": {"2026-07-01": 1}, "fpq_realizada": {}, "cc2_realizada": {}, "cc3_realizada": {"2026-07-02": 1}, "contrato_enviado": {}, "contratos": {}}}], "consolidado": {"cc1_realizada": 6, "cc1_futura": 17, "fpq_realizada": 3, "cc2_realizada": 1, "cc2_futura": 9, "cc3_realizada": 2, "contrato_enviado": 0, "leads": 62, "contratos": 0, "conversao": {"cc1_para_fpq": 50.0, "fpq_para_cc2": 33.3, "cc2_para_cc3": 200.0}, "leads_funil": 62, "leads_atribuidos_closers": 0}, "ritmo": {"dias_uteis_total": 23, "dias_uteis_passados": 2}, "pace": {"leads": {"label": "Leads", "meta": 1500, "estimado": false, "daily": {"2026-07-02": 38, "2026-07-01": 24}, "ideal_cumulative": {"2026-07-01": 65.2, "2026-07-02": 130.4, "2026-07-03": 195.7, "2026-07-04": 195.7, "2026-07-05": 195.7, "2026-07-06": 260.9, "2026-07-07": 326.1, "2026-07-08": 391.3, "2026-07-09": 456.5, "2026-07-10": 521.7, "2026-07-11": 521.7, "2026-07-12": 521.7, "2026-07-13": 587.0, "2026-07-14": 652.2, "2026-07-15": 717.4, "2026-07-16": 782.6, "2026-07-17": 847.8, "2026-07-18": 847.8, "2026-07-19": 847.8, "2026-07-20": 913.0, "2026-07-21": 978.3, "2026-07-22": 1043.5, "2026-07-23": 1108.7, "2026-07-24": 1173.9, "2026-07-25": 1173.9, "2026-07-26": 1173.9, "2026-07-27": 1239.1, "2026-07-28": 1304.3, "2026-07-29": 1369.6, "2026-07-30": 1434.8, "2026-07-31": 1500.0}}, "cc1": {"label": "CC1 realizada", "meta": 145, "estimado": true, "daily": {"2026-07-01": 5, "2026-07-02": 1}, "ideal_cumulative": {"2026-07-01": 6.3, "2026-07-02": 12.6, "2026-07-03": 18.9, "2026-07-04": 18.9, "2026-07-05": 18.9, "2026-07-06": 25.2, "2026-07-07": 31.5, "2026-07-08": 37.8, "2026-07-09": 44.1, "2026-07-10": 50.4, "2026-07-11": 50.4, "2026-07-12": 50.4, "2026-07-13": 56.7, "2026-07-14": 63.0, "2026-07-15": 69.3, "2026-07-16": 75.7, "2026-07-17": 82.0, "2026-07-18": 82.0, "2026-07-19": 82.0, "2026-07-20": 88.3, "2026-07-21": 94.6, "2026-07-22": 100.9, "2026-07-23": 107.2, "2026-07-24": 113.5, "2026-07-25": 113.5, "2026-07-26": 113.5, "2026-07-27": 119.8, "2026-07-28": 126.1, "2026-07-29": 132.4, "2026-07-30": 138.7, "2026-07-31": 145.0}}, "fpq": {"label": "FPQ recebida", "meta": 72, "estimado": true, "daily": {"2026-07-02": 2, "2026-07-01": 1}, "ideal_cumulative": {"2026-07-01": 3.1, "2026-07-02": 6.3, "2026-07-03": 9.4, "2026-07-04": 9.4, "2026-07-05": 9.4, "2026-07-06": 12.5, "2026-07-07": 15.7, "2026-07-08": 18.8, "2026-07-09": 21.9, "2026-07-10": 25.0, "2026-07-11": 25.0, "2026-07-12": 25.0, "2026-07-13": 28.2, "2026-07-14": 31.3, "2026-07-15": 34.4, "2026-07-16": 37.6, "2026-07-17": 40.7, "2026-07-18": 40.7, "2026-07-19": 40.7, "2026-07-20": 43.8, "2026-07-21": 47.0, "2026-07-22": 50.1, "2026-07-23": 53.2, "2026-07-24": 56.3, "2026-07-25": 56.3, "2026-07-26": 56.3, "2026-07-27": 59.5, "2026-07-28": 62.6, "2026-07-29": 65.7, "2026-07-30": 68.9, "2026-07-31": 72.0}}, "cc2": {"label": "CC2 realizada", "meta": 24, "estimado": true, "daily": {"2026-07-02": 1}, "ideal_cumulative": {"2026-07-01": 1.0, "2026-07-02": 2.1, "2026-07-03": 3.1, "2026-07-04": 3.1, "2026-07-05": 3.1, "2026-07-06": 4.2, "2026-07-07": 5.2, "2026-07-08": 6.3, "2026-07-09": 7.3, "2026-07-10": 8.3, "2026-07-11": 8.3, "2026-07-12": 8.3, "2026-07-13": 9.4, "2026-07-14": 10.4, "2026-07-15": 11.5, "2026-07-16": 12.5, "2026-07-17": 13.6, "2026-07-18": 13.6, "2026-07-19": 13.6, "2026-07-20": 14.6, "2026-07-21": 15.7, "2026-07-22": 16.7, "2026-07-23": 17.7, "2026-07-24": 18.8, "2026-07-25": 18.8, "2026-07-26": 18.8, "2026-07-27": 19.8, "2026-07-28": 20.9, "2026-07-29": 21.9, "2026-07-30": 23.0, "2026-07-31": 24.0}}, "cc3": {"label": "CC3 realizada", "meta": 48, "estimado": true, "daily": {"2026-07-02": 2}, "ideal_cumulative": {"2026-07-01": 2.1, "2026-07-02": 4.2, "2026-07-03": 6.3, "2026-07-04": 6.3, "2026-07-05": 6.3, "2026-07-06": 8.3, "2026-07-07": 10.4, "2026-07-08": 12.5, "2026-07-09": 14.6, "2026-07-10": 16.7, "2026-07-11": 16.7, "2026-07-12": 16.7, "2026-07-13": 18.8, "2026-07-14": 20.9, "2026-07-15": 23.0, "2026-07-16": 25.0, "2026-07-17": 27.1, "2026-07-18": 27.1, "2026-07-19": 27.1, "2026-07-20": 29.2, "2026-07-21": 31.3, "2026-07-22": 33.4, "2026-07-23": 35.5, "2026-07-24": 37.6, "2026-07-25": 37.6, "2026-07-26": 37.6, "2026-07-27": 39.7, "2026-07-28": 41.7, "2026-07-29": 43.8, "2026-07-30": 45.9, "2026-07-31": 48.0}}, "contrato_enviado": {"label": "Contrato enviado", "meta": null, "estimado": true, "daily": {}, "ideal_cumulative": {}}, "contratos": {"label": "Contratos fechados", "meta": 15, "estimado": false, "daily": {}, "ideal_cumulative": {"2026-07-01": 0.7, "2026-07-02": 1.3, "2026-07-03": 2.0, "2026-07-04": 2.0, "2026-07-05": 2.0, "2026-07-06": 2.6, "2026-07-07": 3.3, "2026-07-08": 3.9, "2026-07-09": 4.6, "2026-07-10": 5.2, "2026-07-11": 5.2, "2026-07-12": 5.2, "2026-07-13": 5.9, "2026-07-14": 6.5, "2026-07-15": 7.2, "2026-07-16": 7.8, "2026-07-17": 8.5, "2026-07-18": 8.5, "2026-07-19": 8.5, "2026-07-20": 9.1, "2026-07-21": 9.8, "2026-07-22": 10.4, "2026-07-23": 11.1, "2026-07-24": 11.7, "2026-07-25": 11.7, "2026-07-26": 11.7, "2026-07-27": 12.4, "2026-07-28": 13.0, "2026-07-29": 13.7, "2026-07-30": 14.3, "2026-07-31": 15.0}}}, "perdidos": {"total": 26, "pela_qualificadora": 26, "apos_repasse": 0, "por_motivo": [{"motivo": "Sem perfil", "total": 16}, {"motivo": "Sem Retorno", "total": 4}, {"motivo": "Sem interesse", "total": 2}, {"motivo": "Sem Contato", "total": 2}, {"motivo": "Não informado", "total": 1}, {"motivo": "Perfil Fake", "total": 1}]}, "ranking": {"campanhas": {"melhores": [{"nome": "FF - GS PARTNER [Formulario Direto][ABO]", "leads": 2, "cc1": 2, "conversao": 100.0}, {"nome": "search_studio_agro", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "[LEAD][ABO][FORM NATIVO] [CONSULTOR]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "[FORMULARIO DIRETO] [ABO] [25]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "ABO [FORMULARIO DIRETO][FRANQUIA]", "leads": 0, "cc1": 1, "conversao": null}], "piores": [{"nome": "[LEAD][ABO][CONVERSÃO [3_ICP]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][FORM NATIVO] [ADVOGADOS] [02]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][LAL QUENTES PIPE]", "leads": 14, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD] FORMS_NATIVO] [ESCALA] [LISTA GS]", "leads": 15, "cc1": 0, "conversao": 0.0}, {"nome": "[LEAD][ABO][FORM NATIVO] [LISTA LAL E-BOOK] [2]", "leads": 6, "cc1": 0, "conversao": 0.0}]}, "criativos": {"melhores": [{"nome": "[AGRO] [BR] [25-60]", "leads": 2, "cc1": 2, "conversao": 100.0}, {"nome": "PS [ADV]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "02 - [CONT + AGRONEGOCIO][25-60]", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "franquia", "leads": 0, "cc1": 1, "conversao": null}, {"nome": "03 - [CONSULTORIA AGRO]", "leads": 0, "cc1": 1, "conversao": null}], "piores": [{"nome": "[LAL 1% LAL1% Leads quentes - Pipe]", "leads": 10, "cc1": 0, "conversao": 0.0}, {"nome": "[ADV_CONT_EMP]", "leads": 15, "cc1": 0, "conversao": 0.0}, {"nome": "[LAL 1% LAL1% Leads quentes - Pipe] 2", "leads": 4, "cc1": 0, "conversao": 0.0}, {"nome": "[ADVOGADOS][27-60][BR]", "leads": 9, "cc1": 0, "conversao": 0.0}, {"nome": "[LISTA LAL E-BOOK] ][27-60][BR]", "leads": 6, "cc1": 0, "conversao": 0.0}]}}, "scoreboard": {"contratos_fechados": 0, "venda_realizada_total": 0, "caixa_realizado_total": 0}, "previsao": [{"data_registro": "2026-02-07", "closer": "Leonardo Ribeiro", "lead": "Rangel", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 35000, "data_fechamento_esperada": "2026-07-07", "status": "Avaliar pripostacom Yuri", "deal_id": 36020.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/36020", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "João Caldeira", "modelo": null, "bandeira": null, "venda": 50000, "caixa": 48250, "data_fechamento_esperada": "2026-07-06", "status": "Atualizar proposta", "deal_id": null, "deal_link": "joao_caldeira_lima@hotmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Adalberto Neto", "lead": "Antonio Fernandes", "modelo": null, "bandeira": null, "venda": 35000, "caixa": 31500, "data_fechamento_esperada": "2026-07-08", "status": "Definir data de inicio", "deal_id": null, "deal_link": "adm.afrf@gmail.com - Negócios (pipedrive.com)", "deal_status": null, "venda_realizada": null, "caixa_realizado": null}, {"data_registro": "2026-02-07", "closer": "Fred Garcia", "lead": "FELIPE", "modelo": null, "bandeira": null, "venda": 90000, "caixa": 50000, "data_fechamento_esperada": "2026-07-25", "status": "CC3 A REALIZAR", "deal_id": 94494.0, "deal_link": "https://grupostudioexp.pipedrive.com/deal/94494", "deal_status": "open", "venda_realizada": null, "caixa_realizado": null}]};
 
 function fmtMoney(v) {
   if (v === null || v === undefined || isNaN(v)) return '—';
@@ -507,6 +527,103 @@ document.getElementById('closers-grid').innerHTML = D.closers.map(c => `
     </div>
   </div>
 `).join('');
+
+// ===== Relatório por closer (diário / semanal / mês) =====
+const RELATORIO_METRICS = [
+  ['leads', 'Leads'],
+  ['cc1_realizada', 'CC1 realizada'],
+  ['fpq_realizada', 'FPQ recebida'],
+  ['cc2_realizada', 'CC2 realizada'],
+  ['cc3_realizada', 'CC3 realizada'],
+  ['contrato_enviado', 'Contrato enviado'],
+  ['contratos', 'Contratos fechados'],
+];
+
+function relatorioMondayOf(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  const offset = (d.getDay() + 6) % 7; // 0 = segunda
+  d.setDate(d.getDate() - offset);
+  return d.toISOString().slice(0, 10);
+}
+function relatorioFmtDay(iso) {
+  return new Date(iso + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+}
+function relatorioFmtWeek(mondayIso) {
+  const start = new Date(mondayIso + 'T00:00:00');
+  const end = new Date(start); end.setDate(end.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  return `${fmt(start)} – ${fmt(end)}`;
+}
+function relatorioDailyRows(diario) {
+  const days = MONTH_DATES.filter(d => d <= TODAY_ISO).slice().reverse();
+  return days.map(iso => {
+    const row = { label: relatorioFmtDay(iso) };
+    RELATORIO_METRICS.forEach(([key]) => { row[key] = (diario[key] || {})[iso] || 0; });
+    return row;
+  });
+}
+function relatorioWeeklyRows(diario) {
+  const days = MONTH_DATES.filter(d => d <= TODAY_ISO);
+  const weeks = {};
+  days.forEach(iso => {
+    const wk = relatorioMondayOf(iso);
+    if (!weeks[wk]) weeks[wk] = {};
+    RELATORIO_METRICS.forEach(([key]) => {
+      weeks[wk][key] = (weeks[wk][key] || 0) + ((diario[key] || {})[iso] || 0);
+    });
+  });
+  return Object.keys(weeks).sort().reverse().map(wk => ({ label: relatorioFmtWeek(wk), ...weeks[wk] }));
+}
+function relatorioMonthRow(closer) {
+  const row = { label: 'Mês inteiro' };
+  RELATORIO_METRICS.forEach(([key]) => { row[key] = closer[key] ?? 0; });
+  return [row];
+}
+function relatorioRenderTable(elId, rows) {
+  document.getElementById(elId).innerHTML = `
+    <table>
+      <thead><tr><th>Período</th>${RELATORIO_METRICS.map(([, label]) => `<th>${label}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${rows.length ? rows.map(r => `
+          <tr><td>${r.label}</td>${RELATORIO_METRICS.map(([key]) => `<td>${r[key]}</td>`).join('')}</tr>
+        `).join('') : `<tr><td colspan="${RELATORIO_METRICS.length + 1}" style="color:var(--text-dim)">Sem dados</td></tr>`}
+      </tbody>
+    </table>`;
+}
+
+document.getElementById('relatorio-closers').innerHTML = D.closers.map((c, i) => `
+  <div class="relatorio-card">
+    <div class="relatorio-head">
+      <img src="${c.foto}" alt="${c.nome}">
+      <div class="name">${c.nome}</div>
+      <div class="relatorio-tabs" id="relatorio-tabs-${i}">
+        <button class="rtab active" data-period="diario">Diário</button>
+        <button class="rtab" data-period="semanal">Semanal</button>
+        <button class="rtab" data-period="mes">Mês</button>
+      </div>
+    </div>
+    <div class="relatorio-table-wrap" id="relatorio-table-${i}"></div>
+  </div>
+`).join('');
+
+D.closers.forEach((c, i) => {
+  const diario = c.diario || {};
+  const renderPeriod = (period) => {
+    let rows;
+    if (period === 'semanal') rows = relatorioWeeklyRows(diario);
+    else if (period === 'mes') rows = relatorioMonthRow(c);
+    else rows = relatorioDailyRows(diario);
+    relatorioRenderTable(`relatorio-table-${i}`, rows);
+  };
+  renderPeriod('diario');
+  document.querySelectorAll(`#relatorio-tabs-${i} .rtab`).forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll(`#relatorio-tabs-${i} .rtab`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPeriod(btn.dataset.period);
+    });
+  });
+});
 
 // ===== Previsão =====
 const tbody = document.querySelector('#previsao-table tbody');
