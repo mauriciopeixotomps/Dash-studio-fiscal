@@ -416,12 +416,8 @@ document.getElementById('page-h1').textContent = D.pagina_titulo;
 document.getElementById('perdidos-hint').textContent = D.perdidos_hint;
 document.getElementById('relatorio-hint').textContent = D.relatorio_hint;
 const pageNav = document.getElementById('page-nav-link');
-if (D.pagina_outra_url) {
-  pageNav.href = D.pagina_outra_url;
-  pageNav.textContent = D.pagina_outra_label;
-} else {
-  pageNav.style.display = 'none';
-}
+pageNav.href = D.pagina_outra_url;
+pageNav.textContent = D.pagina_outra_label;
 if (D.mes_outro_url) {
   const monthNav = document.getElementById('month-nav-link');
   monthNav.href = D.mes_outro_url;
