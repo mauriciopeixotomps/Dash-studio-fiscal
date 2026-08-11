@@ -463,7 +463,8 @@ const MONTH_DATES = (function() {
   }
   return out;
 })();
-const TODAY_ISO = new Date().toISOString().slice(0, 10);
+const _todayRaw = new Date().toISOString().slice(0, 10);
+const TODAY_ISO = MONTH_DATES.includes(_todayRaw) ? _todayRaw : MONTH_DATES[MONTH_DATES.length - 1];
 
 function cumulativeFromDaily(daily) {
   let cum = 0;
