@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Studio Fiscal — Vendas</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   :root {
     --bg: #1f1f1f;
@@ -135,19 +134,14 @@
      espaço em branco — em tela larga o gap de 20px sumia no meio de colunas
      enormes e virava tudo uma coisa só, sem indicar onde um bloco termina e o
      outro começa (31/08/2026). */
-  .ranking-block { background: var(--card-hi); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; }
+  .ranking-block { background: var(--card-hi); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
   .ranking-block h4 { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 10px; }
-  /* min-width:0 é necessário nos 3 níveis — item de grid por padrão tem
-     min-width:auto, que respeita o min-content do texto (o nome da campanha
-     inteiro, por causa do white-space:nowrap logo abaixo) em vez do espaço
-     disponível, e a coluna "Piores" vazava pra fora do card em vez de truncar
-     com "..." (31/08/2026). */
-  .ranking-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 0; }
-  .ranking-list { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .ranking-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ranking-list { display: flex; flex-direction: column; gap: 6px; }
   .ranking-list .rk-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
   .ranking-list.best .rk-title { color: var(--green); }
   .ranking-list.worst .rk-title { color: var(--red); }
-  .rk-row { background: var(--card); border-radius: 8px; padding: 8px 10px; font-size: 12px; min-width: 0; }
+  .rk-row { background: var(--card); border-radius: 8px; padding: 8px 10px; font-size: 12px; }
   .rk-row .rk-name { color: var(--text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rk-row .rk-nums { color: var(--text-dim); margin-top: 2px; }
 
@@ -248,24 +242,6 @@
     .lost-summary { gap: 12px; }
     .card-row .card { min-width: 0; flex-basis: 100%; }
   }
-
-  /* ===== Exportar página (imagem / PDF) — 31/08/2026 ===== */
-  .export-btn {
-    background: var(--card-hi); border: 1px solid var(--border); color: var(--accent);
-    font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer;
-  }
-  .export-btn:hover { border-color: var(--accent); }
-  .export-btn:disabled { opacity: .6; cursor: wait; }
-  @media print {
-    /* PDF pelo "Imprimir" do navegador: sem isso o fundo escuro vira branco (a
-       maioria dos navegadores não imprime cor de fundo por padrão), os botões
-       de navegação/exportar aparecem no papel à toa, e as tabelas com scroll
-       interno (Relatório por closer) só imprimiam a parte visível na tela. */
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    .page-nav-link, .export-btn, #month-nav-link, #paginas-irmas-nav { display: none !important; }
-    .relatorio-table-wrap { max-height: none !important; overflow: visible !important; }
-    .card { break-inside: avoid; }
-  }
 </style>
 </head>
 <body>
@@ -279,8 +255,6 @@
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <a class="page-nav-link" id="month-nav-link" href="#" style="display:none;"></a>
       <div id="paginas-irmas-nav" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
-      <button class="export-btn" id="export-pdf-btn" title="Abre a caixa de impressão do navegador — escolha 'Salvar como PDF'">🖨 Exportar PDF</button>
-      <button class="export-btn" id="export-image-btn" title="Baixa a página inteira como imagem PNG">📷 Exportar imagem</button>
     </div>
   </header>
 
