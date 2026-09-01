@@ -219,6 +219,10 @@ async function verPeriodo(startIso, endIso) {
   for (const url of candidatos) {
     const d = await fetchMonthData(url);
     if (!d || !d.periodo_inicio || !d.periodo_fim) continue;
+    // Ignora mês cujo próprio período não cruza nada com o intervalo escolhido —
+    // index.html do mês atual sempre entra como candidato mesmo fora do range
+    // pedido (ex: "mês anterior"), sem isso ficava listado em "Meses usados" à toa.
+    if (d.periodo_fim < startIso || d.periodo_inicio > endIso) continue;
     const chave = d.periodo_inicio + '_' + d.periodo_fim;
     if (vistos.has(chave)) continue; // index.html e o arquivo do mês corrente são o mesmo período
     vistos.add(chave);
