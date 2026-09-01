@@ -295,7 +295,7 @@
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <a class="page-nav-link" id="month-nav-link" href="#" style="display:none;"></a>
-      <div id="paginas-irmas-nav" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+      <div id="paginas-irmas-nav" style="display:flex; gap:8px; flex-wrap:wrap;"></div><select id="historico-select" style="background:var(--card-hi);border:1px solid var(--border);color:var(--accent);font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;" onchange="if(this.value) location.href=this.value"><option value="">📁 Histórico</option><option value="index.html">Setembro 2026 (atual)</option><option value="agosto-2026.html">Agosto 2026</option><option value="julho-2026.html">Julho 2026</option></select>
       <button class="export-btn" id="export-pdf-btn" title="Abre a caixa de impressão do navegador — escolha 'Salvar como PDF'">🖨 Exportar PDF</button>
       <button class="export-btn" id="export-image-btn" title="Baixa a página inteira como imagem PNG">📷 Exportar imagem</button>
     </div>
