@@ -73,11 +73,36 @@
   .compare-kpis .m .l { font-size: 10px; color: var(--text-dim); }
   .meses-usados { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
   .aviso { background: var(--card-hi); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .kpi-item { background: var(--card-hi); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .kpi-item .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: 6px; }
+  .kpi-item .val { font-size: 22px; font-weight: 700; }
+  .kpi-item .sub { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .compare-kpis .m { flex: 1; background: var(--card); border-radius: 8px; padding: 6px; text-align: center; }
+  .compare-kpis .m .v { font-size: 15px; font-weight: 700; }
+  .compare-kpis .m .l { font-size: 10px; color: var(--text-dim); }
+  .lost-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 16px; }
+  .lost-reasons { display: flex; flex-direction: column; gap: 8px; }
+  .lost-reason-row { display: grid; grid-template-columns: 130px 1fr 28px; align-items: center; gap: 8px; font-size: 12px; }
+  .lost-reason-track { height: 16px; background: var(--card-hi); border-radius: 6px; overflow: hidden; }
+  .lost-reason-fill { height: 100%; border-radius: 6px; }
+  .lost-reason-fill.qualificadora { background: var(--red); }
+  .lost-reason-fill.expansao { background: var(--orange); }
+  .rk-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 12px; min-width: 0; }
+  .rk-col-title { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; margin-bottom: 10px; }
+  .rk-col-title.melhores { color: var(--green); }
+  .rk-col-title.piores { color: var(--red); }
+  .rk-row { background: var(--card-hi); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; min-width: 0; }
+  .rk-row .rk-name { font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rk-row .rk-meta { color: var(--text-dim); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; min-width: 0; }
+  .rk-grid > div { min-width: 0; }
   @media (max-width: 640px) {
     body { padding: 12px; }
     .card { padding: 14px; }
     .compare-grid { grid-template-columns: 1fr; }
     .funnel-row, .compare-card .funnel-row { grid-template-columns: 90px 1fr 40px 56px; gap: 6px; }
+    .rk-cols, .lost-split { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -92,7 +117,7 @@
   </header>
 
   <div class="aviso">
-    ⚠️ Esta página não inclui <b>Perdidos</b> nem <b>Ranking de campanhas/criativos</b> — esses dois só existem como total do mês fechado, sem o detalhe dia a dia necessário pra recortar um período customizado.
+    ⚠️ Esta página não inclui o <b>Mapa de calor de horários de CC1</b> — só existe como total do mês fechado, sem o detalhe (dia + hora) necessário pra recortar um período customizado. Meses publicados antes de 12/09/2026 também não têm Placar/Perdidos/Ranking neste recorte (esses três passaram a existir por período a partir dessa data).
   </div>
 
   <div class="card">
@@ -119,6 +144,10 @@
 
   <div id="resultado" style="display:none">
     <div class="card">
+      <h2>Placar do período <span class="hint">— contratos fechados, franquia x partner, venda e caixa realizados</span></h2>
+      <div class="kpi-row" id="placar-periodo"></div>
+    </div>
+    <div class="card">
       <h2>Consolidado do período <span class="hint">— funil Leads iniciados → CC1 → FPQ → CC2 → CC3 → Contrato enviado → Fechado</span></h2>
       <div class="funnel" id="funnel-consolidado"></div>
       <div class="meses-usados" id="meses-usados"></div>
@@ -126,6 +155,15 @@
     <div class="card">
       <h2>Comparativo entre closers <span class="hint">— mesmo funil, por closer, no período escolhido</span></h2>
       <div class="compare-grid" id="compare-grid"></div>
+    </div>
+    <div class="card">
+      <h2>Perdidos no período <span class="hint" id="perdidos-hint">— negócios perdidos no período escolhido</span></h2>
+      <div class="kpi-row" id="perdidos-kpis"></div>
+      <div class="lost-split" id="perdidos-split"></div>
+    </div>
+    <div class="card">
+      <h2>Ranking de campanhas e criativos <span class="hint">— por CC1 realizada no período escolhido</span></h2>
+      <div class="rk-grid" id="ranking-grid"></div>
     </div>
   </div>
 </div>
@@ -137,6 +175,13 @@ function isoDate(d) { return d.toISOString().slice(0, 10); }
 function fmtBR(iso) {
   const [y,m,d] = iso.split('-');
   return `${d}/${m}/${y}`;
+}
+function fmtMoney(v) {
+  if (v === null || v === undefined || isNaN(v)) return 'R$ 0';
+  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+}
+function pctCalc(a, b) {
+  return b ? Math.round(1000 * a / b) / 10 : null;
 }
 
 // Todo mês entre `start` e `end` (inclusive), como {ano, mes(1-12)}.
@@ -174,6 +219,10 @@ const METRICAS = [
   ['contrato_enviado', 'Contrato enviado'],
   ['contratos', 'Fechados (Ganho)'],
 ];
+// Chaves extras que também existem em c.diario mas não entram no funil (são
+// dinheiro, ou um recorte de "contratos") — Placar do período e chips no
+// comparativo (12/09/2026, "todos os indicadores refletirem o período").
+const EXTRA_KEYS = ['contratos_franquia', 'contratos_partner', 'no_show', 'venda', 'caixa'];
 
 function somaDiario(diario, key, startIso, endIso) {
   const dias = diario?.[key] || {};
@@ -239,14 +288,21 @@ async function verPeriodo(startIso, endIso) {
   const totaisConsolidado = {};
   const totaisPorCloser = {};
   METRICAS.forEach(([key]) => { totaisConsolidado[key] = 0; });
+  EXTRA_KEYS.forEach(key => { totaisConsolidado[key] = 0; });
 
   dadosMeses.forEach(d => {
     (d.closers || []).forEach(c => {
       if (!totaisPorCloser[c.nome]) {
         totaisPorCloser[c.nome] = { nome: c.nome, foto: c.foto };
         METRICAS.forEach(([key]) => { totaisPorCloser[c.nome][key] = 0; });
+        EXTRA_KEYS.forEach(key => { totaisPorCloser[c.nome][key] = 0; });
       }
       METRICAS.forEach(([key]) => {
+        const v = somaDiario(c.diario, key, startIso, endIso);
+        totaisConsolidado[key] += v;
+        totaisPorCloser[c.nome][key] += v;
+      });
+      EXTRA_KEYS.forEach(key => {
         const v = somaDiario(c.diario, key, startIso, endIso);
         totaisConsolidado[key] += v;
         totaisPorCloser[c.nome][key] += v;
@@ -255,6 +311,7 @@ async function verPeriodo(startIso, endIso) {
   });
 
   renderFunnel('funnel-consolidado', totaisConsolidado);
+  renderPlacar(totaisConsolidado);
 
   const closersArr = Object.values(totaisPorCloser).sort((a, b) => b.cc1_realizada - a.cc1_realizada);
   document.getElementById('compare-grid').innerHTML = closersArr.map(c => `
@@ -275,14 +332,134 @@ async function verPeriodo(startIso, endIso) {
           </div>`;
         }).join('')}
       </div>
+      <div class="compare-kpis">
+        <div class="m"><div class="v">${c.contratos_franquia || 0}</div><div class="l">Franquia</div></div>
+        <div class="m"><div class="v">${c.contratos_partner || 0}</div><div class="l">Partner</div></div>
+        <div class="m"><div class="v">${c.no_show || 0}</div><div class="l">No-show</div></div>
+        <div class="m"><div class="v">${fmtMoney(c.venda)}</div><div class="l">Venda</div></div>
+      </div>
     </div>
   `).join('');
+
+  // ===== Perdidos e Ranking: junta a lista bruta de todos os meses buscados,
+  // filtra pelo período exato e recalcula do zero (mesma lógica do servidor,
+  // ver build_dashboard.py) — meses publicados antes de 12/09/2026 não têm
+  // essas listas (D.perdidos.detalhe / D.ranking.detalhe_*), então ficam de
+  // fora do recorte sem quebrar nada (arrays vazios).
+  const perdidosDetalhe = [];
+  const rankingLeads = [];
+  const rankingCc1 = [];
+  dadosMeses.forEach(d => {
+    (d.perdidos?.detalhe || []).forEach(x => perdidosDetalhe.push(x));
+    (d.ranking?.detalhe_leads || []).forEach(x => rankingLeads.push(x));
+    (d.ranking?.detalhe_cc1 || []).forEach(x => rankingCc1.push(x));
+  });
+  const noPeriodo = x => x.data && x.data >= startIso && x.data <= endIso;
+  renderPerdidos(perdidosDetalhe.filter(noPeriodo));
+  renderRanking(rankingLeads.filter(noPeriodo), rankingCc1.filter(noPeriodo));
 
   document.getElementById('meses-usados').textContent =
     'Meses usados: ' + dadosMeses.map(d => d.mes_label).join(', ');
   document.getElementById('resultado').style.display = '';
   statusEl.textContent = `Período de ${fmtBR(startIso)} até ${fmtBR(endIso)}.`;
   btn.disabled = false;
+}
+
+function renderPlacar(t) {
+  document.getElementById('placar-periodo').innerHTML = `
+    <div class="kpi-item">
+      <div class="lbl">Contratos fechados</div>
+      <div class="val">${t.contratos || 0}</div>
+      <div class="sub">${t.contratos_franquia || 0} Franquia · ${t.contratos_partner || 0} Partner</div>
+    </div>
+    <div class="kpi-item">
+      <div class="lbl">Venda realizada</div>
+      <div class="val">${fmtMoney(t.venda)}</div>
+    </div>
+    <div class="kpi-item">
+      <div class="lbl">Caixa realizado</div>
+      <div class="val">${fmtMoney(t.caixa)}</div>
+    </div>
+  `;
+}
+
+function renderPerdidos(lista) {
+  const total = lista.length;
+  const qualificadora = lista.filter(x => x.pela_qualificadora).length;
+  const expansao = total - qualificadora;
+  document.getElementById('perdidos-kpis').innerHTML = `
+    <div class="kpi-item"><div class="lbl">Total perdidos</div><div class="val">${total}</div></div>
+    <div class="kpi-item"><div class="lbl">Pela Qualificadora</div><div class="val">${qualificadora}</div></div>
+    <div class="kpi-item"><div class="lbl">Após repasse ao closer</div><div class="val">${expansao}</div></div>
+  `;
+  const contarMotivos = (arr) => {
+    const m = {};
+    arr.forEach(x => { const k = x.motivo || 'Não informado'; m[k] = (m[k] || 0) + 1; });
+    return Object.entries(m).sort((a, b) => b[1] - a[1]);
+  };
+  const bloco = (titulo, arr, cls) => {
+    const motivos = contarMotivos(arr);
+    const max = Math.max(1, ...motivos.map(([, n]) => n));
+    if (!motivos.length) return `<div><div class="rk-col-title">${titulo}</div><div style="color:var(--text-dim);font-size:12px">Nenhum negócio perdido nesse recorte.</div></div>`;
+    return `
+      <div>
+        <div class="rk-col-title">${titulo}</div>
+        <div class="lost-reasons">
+          ${motivos.map(([motivo, n]) => `
+            <div class="lost-reason-row">
+              <div>${motivo}</div>
+              <div class="lost-reason-track"><div class="lost-reason-fill ${cls}" style="width:${100 * n / max}%"></div></div>
+              <div style="text-align:right">${n}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  };
+  document.getElementById('perdidos-split').innerHTML =
+    bloco('Perdidos pela Qualificadora', lista.filter(x => x.pela_qualificadora), 'qualificadora') +
+    bloco('Perdidos após repasse — Expansão', lista.filter(x => !x.pela_qualificadora), 'expansao');
+}
+
+function rankingDe(leads, cc1, col) {
+  const leadsCount = {}, cc1Count = {};
+  leads.forEach(x => { const v = x[col]; if (v) leadsCount[v] = (leadsCount[v] || 0) + 1; });
+  cc1.forEach(x => { const v = x[col]; if (v) cc1Count[v] = (cc1Count[v] || 0) + 1; });
+  const nomes = new Set([...Object.keys(leadsCount), ...Object.keys(cc1Count)]);
+  const itens = [...nomes].map(nome => {
+    const leadsN = leadsCount[nome] || 0, cc1N = cc1Count[nome] || 0;
+    return { nome, leads: leadsN, cc1: cc1N, conversao: pctCalc(cc1N, leadsN) };
+  });
+  const melhores = itens.filter(i => i.cc1 > 0).sort((a, b) => (b.cc1 - a.cc1) || ((b.conversao || 0) - (a.conversao || 0))).slice(0, 5);
+  let piores = itens.filter(i => i.leads >= 3);
+  if (!piores.length) piores = itens.filter(i => i.leads >= 1);
+  piores = piores.sort((a, b) => ((a.conversao ?? 999) - (b.conversao ?? 999)) || (a.cc1 - b.cc1)).slice(0, 5);
+  return { melhores, piores };
+}
+
+function rkRow(item) {
+  return `<div class="rk-row"><div class="rk-name">${item.nome}</div><div class="rk-meta">${item.cc1} CC1 · ${item.leads} leads · conv. ${item.conversao === null ? '—' : item.conversao + '%'}</div></div>`;
+}
+
+function renderRankingBloco(elId, titulo, r) {
+  document.getElementById(elId).innerHTML = `
+    <h3 style="margin:0 0 4px;font-size:13px">${titulo}</h3>
+    <div class="rk-cols">
+      <div>
+        <div class="rk-col-title melhores">Melhores</div>
+        ${r.melhores.length ? r.melhores.map(rkRow).join('') : '<div style="color:var(--text-dim);font-size:12px">Sem CC1 nesse recorte.</div>'}
+      </div>
+      <div>
+        <div class="rk-col-title piores">Piores</div>
+        ${r.piores.length ? r.piores.map(rkRow).join('') : '<div style="color:var(--text-dim);font-size:12px">Sem dado suficiente.</div>'}
+      </div>
+    </div>`;
+}
+
+function renderRanking(leads, cc1) {
+  document.getElementById('ranking-grid').innerHTML =
+    '<div id="rk-campanhas"></div><div id="rk-criativos"></div>';
+  renderRankingBloco('rk-campanhas', 'Campanhas (UTM Campaign)', rankingDe(leads, cc1, 'utm_campanha'));
+  renderRankingBloco('rk-criativos', 'Criativos (UTM Content)', rankingDe(leads, cc1, 'utm_criativo'));
 }
 
 document.getElementById('btn-ver').addEventListener('click', () => {
