@@ -459,7 +459,7 @@ function renderRanking(leads, cc1) {
   document.getElementById('ranking-grid').innerHTML =
     '<div id="rk-campanhas"></div><div id="rk-criativos"></div>';
   renderRankingBloco('rk-campanhas', 'Campanhas (UTM Campaign)', rankingDe(leads, cc1, 'utm_campanha'));
-  renderRankingBloco('rk-criativos', 'Criativos (UTM Content)', rankingDe(leads, cc1, 'utm_criativo'));
+  renderRankingBloco('rk-criativos', 'Criativos (UTM Term)', rankingDe(leads, cc1, 'utm_criativo'));
 }
 
 document.getElementById('btn-ver').addEventListener('click', () => {
