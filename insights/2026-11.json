@@ -1,0 +1,22 @@
+{
+  "atualizado_em": "23/11/2026 19:30",
+  "autor": "Claude, a partir dos dados do painel",
+  "analise": "Novembro não fecha a meta: faltando 5 dias úteis, nenhuma franquia paga foi fechada (os 2 contratos do mês são Partner grátis) e a única previsão consistente para o mês é uma Platinum de R$ 50 mil com 10% de chance. O gargalo está no topo do funil, não nos closers: o Inbound gerou mais leads que a média (947, projeção de ~1.240), mas só 31 viraram CC1, contra 63 em média nos três meses anteriores. Essa queda acompanha a capacidade de agendamento, que foi de 3 SDRs em setembro para 1 hoje, com 5,7% de agendamento contra a meta de 30%.",
+  "destaques": [
+    "Venda e caixa realizados: R$ 0. A média dos três meses anteriores é de cerca de R$ 297 mil em venda e 5 franquias por mês.",
+    "Previsão: 7 dos 8 negócios previstos para novembro estão com data vencida, sem probabilidade ou sem valor. O Rangel (Corporate, R$ 90 mil, 91%) responde sozinho por mais da metade do valor ponderado e está com a data vencida desde 19/11.",
+    "Agendamento: um único SDR para mais de mil leads. Os 626 leads perdidos por \"sem perfil\" (66% do mês) apontam para segmentação de mídia; os 376 \"sem retorno\" apontam para velocidade de contato.",
+    "No-show: 39% das CC1 marcadas no Inbound não aconteceram.",
+    "Outbound começou neste mês: a base foi higienizada (319 registros descartados por dado ruim, duplicidade ou segmento) e agora começa a gerar reuniões. Fica sem meta de contrato enquanto estiver em rampa.",
+    "Postergados para dezembro: Cyro Neto e Guilherme Carvalho (R$ 131,5 mil em venda prevista)."
+  ],
+  "acoes": [
+    {"acao": "Atualizar a planilha de previsão: datas vencidas, probabilidades em branco e franquia sem valor", "responsavel": "Closers", "prazo": "antes da reunião de terça"},
+    {"acao": "Outbound: começar a gerar reuniões a partir da base higienizada", "responsavel": "Time de expansão", "prazo": "dezembro"}
+  ],
+  "decisoes_yuri": [
+    "Capacidade de agendamento: repor SDR ou reduzir a meta de agendamento. Com 1 SDR, a meta de 30% exige uns 300 agendamentos por mês.",
+    "Meta de dezembro: 15 contratos é cerca de 3 vezes a média recente de franquias pagas. Definir se a meta se mantém e o que muda para alcançá-la.",
+    "Mídia: rever campanhas com volume e nenhuma CC1 (ex.: LAL QUENTES PIPE, 179 leads e 0 CC1) e a segmentação que gera \"sem perfil\"."
+  ]
+}

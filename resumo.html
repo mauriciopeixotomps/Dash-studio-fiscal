@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Fiscal — Resumo executivo</title>
+<style>
+  :root {
+    --bg: #1f1f1f; --card: #2a2622; --card-hi: #35302a; --border: #47403a;
+    --text: #fdfdfd; --text-dim: #a49b8f; --accent: #d5ae77;
+    --green: #22c55e; --orange: #f97316; --red: #ef4444; --yellow: #eab308; --blue: #38bdf8;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 24px; line-height: 1.45; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .brand { color: var(--accent); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { font-size: 22px; margin: 4px 0 2px; }
+  .subtitle { color: var(--text-dim); font-size: 13px; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .pill, select.pill { background: var(--card-hi); border: 1px solid var(--border); color: var(--accent); font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; text-decoration: none; cursor: pointer; font-family: inherit; }
+  .pill:hover { border-color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+  .card h2 { font-size: 15px; margin: 0 0 12px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .card h2 .num { color: var(--accent); font-size: 12px; font-weight: 700; }
+  .hint { color: var(--text-dim); font-weight: 400; font-size: 12px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .tile { background: var(--card-hi); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .tile .lbl { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+  .tile .val { font-size: 26px; font-weight: 700; margin: 4px 0 2px; }
+  .tile .sub { color: var(--text-dim); font-size: 12px; }
+  .tile.minor .val { font-size: 20px; color: var(--text-dim); }
+  .bar { height: 6px; background: #3a342e; border-radius: 4px; margin-top: 8px; overflow: hidden; position: relative; }
+  .bar > span { display: block; height: 100%; background: var(--accent); }
+  .bar > i { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text-dim); }
+  .good { color: var(--green); } .bad { color: var(--red); } .warn { color: var(--yellow); } .dim { color: var(--text-dim); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 7px 8px; border-bottom: 1px solid #3a342e; vertical-align: top; }
+  td.n, th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  tr.cur td { background: rgba(213,174,119,.07); }
+  .scroll { overflow-x: auto; }
+  .insights ol, .insights ul { margin: 0; padding-left: 20px; }
+  .insights li { margin-bottom: 8px; }
+  .insights li b { color: var(--accent); font-weight: 600; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } body { padding: 14px; } .tile .val { font-size: 22px; } }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-dim); margin-left: 6px; }
+  .tag.red { color: var(--red); border-color: rgba(239,68,68,.4); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(234,179,8,.4); }
+  .tag.green { color: var(--green); border-color: rgba(34,197,94,.4); }
+  a { color: var(--accent); }
+  textarea { width: 100%; min-height: 140px; background: var(--card-hi); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px; font: inherit; font-size: 13px; resize: vertical; }
+  .meta-line { color: var(--text-dim); font-size: 12px; margin-top: 8px; }
+  .loading { color: var(--text-dim); padding: 40px 0; text-align: center; }
+  .funil { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px; }
+  .etapa { background: var(--card-hi); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+  .etapa .lbl { color: var(--text-dim); font-size: 11px; }
+  .etapa .val { font-size: 20px; font-weight: 700; }
+  .etapa .cmp { font-size: 11px; margin-top: 2px; }
+  .etapa.pior { border-color: var(--red); }
+  @media print {
+    body { background: #fff; color: #111; padding: 0; }
+    .card, .tile, .etapa { background: #fff; border-color: #ccc; break-inside: avoid; }
+    .nav, #notas-card button, .noprint { display: none !important; }
+    .tile .sub, .hint, .dim, th, .subtitle, .meta-line, .etapa .lbl { color: #555; }
+    textarea { border: none; background: #fff; color: #111; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Studio Fiscal · Expansão</div>
+      <h1 id="titulo">Resumo executivo</h1>
+      <div class="subtitle" id="subtitulo">carregando…</div>
+    </div>
+    <div class="nav">
+      <select class="pill" id="mes-select" title="Escolher mês"></select>
+      <a class="pill" id="link-painel" href="index.html">Painel completo →</a>
+      <button class="pill" onclick="window.print()">Exportar PDF</button>
+    </div>
+  </header>
+  <div id="app"><div class="loading">Carregando dados do Pipedrive…</div></div>
+</div>
+
+<script>
+// =====================================================================
+// Resumo executivo — lê os dados (const D) do painel do mês, gerado pelo
+// robô, e monta a visão de reunião. Este arquivo NÃO é sobrescrito pelo
+// robô: tudo é calculado aqui no navegador, a partir do painel do mês.
+// Regras aplicadas (ver insights do 23/11/2026):
+//  - pessoas sem nenhuma atividade no mês não aparecem (ex.: Jailson);
+//  - Partner (grátis) separado de franquia paga em todo lugar;
+//  - nenhuma taxa de conversão entre etapas calculada sobre contagens do
+//    período (misturam leads de meses diferentes e dão >100%); o funil
+//    mostra volumes comparados com a média dos 3 meses anteriores;
+//  - previsão: negócio com data de fechamento vencida, sem probabilidade
+//    ou franquia sem valor sai da projeção confiável e vai para a lista
+//    "previsão a atualizar";
+//  - Outbound: motivos "Triagem Outbound" contam como higienização da base,
+//    não como perda comercial; canal sem meta enquanto estiver em rampa.
+// =====================================================================
+
+const fmtN = n => (n == null || isNaN(n)) ? '—' : Math.round(n).toLocaleString('pt-BR');
+const fmtR = n => (n == null || isNaN(n)) ? '—' : 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+const fmtRk = n => (n == null || isNaN(n)) ? '—' : (Math.abs(n) >= 1000 ? 'R$ ' + (n / 1000).toLocaleString('pt-BR', {maximumFractionDigits: 1}) + ' mil' : fmtR(n));
+const fmtP = n => (n == null || isNaN(n) || !isFinite(n)) ? '—' : n.toLocaleString('pt-BR', {maximumFractionDigits: 1}) + '%';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+// ---------- leitura do painel ----------
+function extrairD(html) {
+  const i = html.indexOf('const D = ');
+  if (i < 0) throw new Error('dados não encontrados');
+  let j = i + 10, dep = 0, inStr = false;
+  for (; j < html.length; j++) {
+    const c = html[j];
+    if (inStr) { if (c === '\\') { j++; continue; } if (c === '"') inStr = false; continue; }
+    if (c === '"') inStr = true;
+    else if (c === '{') dep++;
+    else if (c === '}') { dep--; if (dep === 0) break; }
+  }
+  return JSON.parse(html.slice(i + 10, j + 1));
+}
+async function carregar(url) {
+  const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache: 'no-store'});
+  if (!r.ok) throw new Error(url + ': ' + r.status);
+  return extrairD(await r.text());
+}
+async function carregarJSON(url) {
+  try { const r = await fetch(url + '?t=' + Date.now(), {cache: 'no-store'}); if (!r.ok) return null; return await r.json(); }
+  catch (e) { return null; }
+}
+// Normaliza: páginas novas têm D.funis[]; as antigas (até out/26) são só o Inbound.
+function normalizar(D) {
+  const funis = D.funis ? D.funis : [{sufixo: 'inbound', titulo: 'INBOUND', dados: D}];
+  const inb = (funis.find(f => f.sufixo === 'inbound') || funis[0]).dados;
+  return {
+    D, funis, inb,
+    mesLabel: D.mes_label || inb.mes_label,
+    inicio: D.periodo_inicio || inb.periodo_inicio,
+    fim: D.periodo_fim || inb.periodo_fim,
+    gerado: D.gerado_em || inb.gerado_em,
+    ritmo: inb.ritmo || D.ritmo || {},
+    sb: inb.scoreboard || {},
+    geral: inb.consolidado_geral || inb.consolidado || {},
+    closers: inb.closers_geral || inb.closers || [],
+    previsao: inb.previsao || [],
+    ganhos: inb.ganhos || [],
+    historico: D.historico || [],
+  };
+}
+const chaveMes = M => (M.inicio || '').slice(0, 7);
+
+// ---------- métricas derivadas ----------
+function franquiasPagas(M) {
+  const sb = M.sb;
+  if (sb.contratos_fechados_franquia != null) return sb.contratos_fechados_franquia;
+  return sb.contratos_fechados; // meses antigos não separavam (só franquia)
+}
+function partners(M) { return M.sb.contratos_fechados_partner || 0; }
+function sdrsAtivos(inb) { return (inb.agendadores || []).filter(a => (a.leads_recebidos || 0) > 0 || (a.agendamentos || 0) > 0); }
+function pessoaAtiva(c) {
+  return ['leads','cc1_realizada','cc1_futura','fpq_realizada','cc2_realizada','cc2_futura','cc3_realizada','contrato_enviado','contratos','no_show']
+    .some(k => (c[k] || 0) > 0);
+}
+function volumes(M) {
+  // Sempre o funil Inbound: é o único com série comparável desde jul/26
+  // (até out/26 os outros funis ficavam em páginas separadas).
+  const c = M.inb.consolidado || {};
+  return {
+    leads: c.leads, cc1: c.cc1_realizada, fpq: c.fpq_realizada, cc2: c.cc2_realizada,
+    cc3: c.cc3_realizada, contrato: c.contrato_enviado, franquias: c.contratos_franquia != null ? c.contratos_franquia : c.contratos,
+    no_show: c.no_show,
+  };
+}
+function mesAberto(M) {
+  const r = M.ritmo; return r.dias_uteis_total && r.dias_uteis_passados < r.dias_uteis_total;
+}
+function fatorProjecao(M) {
+  const r = M.ritmo; if (!mesAberto(M) || !r.dias_uteis_passados) return 1;
+  return r.dias_uteis_total / r.dias_uteis_passados;
+}
+function hojeISO(M) {
+  // "hoje" = data em que o painel foi gerado (não a do navegador), pra
+  // resumo de mês fechado não marcar tudo como vencido.
+  return (M.gerado || '').slice(0, 10) || new Date().toISOString().slice(0, 10);
+}
+
+// Previsão saneada
+function analisarPrevisao(M) {
+  const hoje = hojeISO(M), fim = M.fim;
+  const abertos = M.previsao.filter(p => p.deal_status === 'open');
+  const problemas = [], confiaveis = [], posMes = [];
+  for (const p of abertos) {
+    const probs = [];
+    const dt = p.data_fechamento_esperada;
+    if (dt && dt > fim) { posMes.push(p); continue; }
+    if (!dt) probs.push('sem data de fechamento');
+    else if (dt < hoje) probs.push('data vencida (' + dt.split('-').reverse().join('/') + ')');
+    if (p.probabilidade == null) probs.push('sem probabilidade');
+    if (p.tipo_contrato === 'franquia' && !p.venda) probs.push('franquia sem valor');
+    if ((p.confianca === 'FRIO' && (p.probabilidade || 0) >= 50) || (p.confianca === 'QUENTE' && p.probabilidade != null && p.probabilidade < 50))
+      probs.push('confiança ' + p.confianca.toLowerCase() + ' com ' + p.probabilidade + '%');
+    if (probs.length) problemas.push({p, probs}); else confiaveis.push(p);
+  }
+  const pond = arr => arr.reduce((s, p) => s + (p.venda || 0) * (p.probabilidade || 0) / 100, 0);
+  const cheio = arr => arr.reduce((s, p) => s + (p.venda || 0), 0);
+  const noMes = abertos.filter(p => !(p.data_fechamento_esperada && p.data_fechamento_esperada > fim));
+  const realizado = M.sb.venda_realizada_total || 0;
+  const maior = noMes.filter(p => p.venda).sort((a, b) => (b.venda * (b.probabilidade || 0)) - (a.venda * (a.probabilidade || 0)))[0];
+  return {
+    abertos, problemas, confiaveis, posMes, noMes, realizado,
+    provavel: realizado + pond(confiaveis),
+    teto: realizado + cheio(noMes.filter(p => p.tipo_contrato === 'franquia')),
+    franquiasConfiaveis: confiaveis.filter(p => p.tipo_contrato === 'franquia'),
+    franquiasNoMes: noMes.filter(p => p.tipo_contrato === 'franquia'),
+    ponderadoTotal: pond(noMes), maior,
+  };
+}
+
+// Outbound: higienização x perda comercial
+function outboundRampa(f) {
+  const pm = (f.perdidos && f.perdidos.por_motivo) || [];
+  let hig = 0, com = 0;
+  for (const m of pm) { if (/^Triagem Outbound/i.test(m.motivo)) hig += m.total; else com += m.total; }
+  return {hig, com};
+}
+
+// ---------- leitura automática (regras) ----------
+function leituraAutomatica(M, prev, PV) {
+  const out = [];
+  const r = M.ritmo, aberto = mesAberto(M), fp = franquiasPagas(M), pt = partners(M);
+  const pctDias = r.dias_uteis_total ? 100 * r.dias_uteis_passados / r.dias_uteis_total : null;
+  const mediaFr = prev.length ? prev.reduce((s, x) => s + (franquiasPagas(x) || 0), 0) / prev.length : null;
+  const mediaVenda = prev.length ? prev.reduce((s, x) => s + (x.sb.venda_realizada_total || 0), 0) / prev.length : null;
+
+  // 1. Placar
+  let t = `<b>Placar:</b> ${fmtN(fp)} franquia(s) paga(s), ${fmtR(M.sb.venda_realizada_total)} em venda e ${fmtR(M.sb.caixa_realizado_total)} em caixa`;
+  if (aberto) t += `, com ${fmtP(pctDias)} dos dias úteis já passados (${r.dias_uteis_passados}/${r.dias_uteis_total})`;
+  if (pt) t += `. Além disso, ${pt} Partner(s) grátis, que não entram em receita`;
+  if (mediaFr != null) t += `. Média dos ${prev.length} meses anteriores: ${fmtN(mediaFr)} franquia(s) e ${fmtRk(mediaVenda)} por mês`;
+  out.push(t + '.');
+
+  // 2. Projeção
+  if (aberto) {
+    let s = `<b>Projeção:</b> provável ${fmtRk(PV.provavel)} (só negócios com previsão consistente, ponderados pela probabilidade) e teto de ${fmtRk(PV.teto)} se todas as franquias previstas para o mês fecharem.`;
+    if (PV.problemas.length) s += ` ${PV.problemas.length} de ${PV.noMes.length} negócios previstos para o mês estão com a previsão inconsistente e precisam ser atualizados antes da reunião.`;
+    if (PV.maior && PV.ponderadoTotal > 0) {
+      const share = 100 * PV.maior.venda * (PV.maior.probabilidade || 0) / 100 / PV.ponderadoTotal;
+      if (share >= 40) s += ` Concentração: ${fmtP(share)} do valor ponderado depende de um único negócio (${esc(PV.maior.lead)}, ${fmtRk(PV.maior.venda)}).`;
+    }
+    out.push(s);
+  }
+
+  // 3. Gargalo (volume projetado vs média 3m)
+  if (prev.length) {
+    const v = volumes(M), f = fatorProjecao(M);
+    const etapas = [['leads','Leads'],['cc1','CC1 realizada'],['fpq','FPQ'],['cc2','CC2']];
+    let pior = null;
+    for (const [k, lbl] of etapas) {
+      const med = prev.reduce((s, x) => s + (volumes(x)[k] || 0), 0) / prev.length;
+      if (!med || v[k] == null) continue;
+      const dif = 100 * (v[k] * f - med) / med;
+      if (!pior || dif < pior.dif) pior = {lbl, dif, med, proj: v[k] * f};
+    }
+    if (pior && pior.dif < -15) out.push(`<b>Gargalo (Inbound):</b> ${pior.lbl} é a etapa que mais caiu. ` + (aberto ? `No ritmo atual, o mês fecha em ~${fmtN(pior.proj)}` : `O mês fechou em ${fmtN(pior.proj)}`) + `, contra a média de ${fmtN(pior.med)} dos meses anteriores (${fmtP(pior.dif)}).`);
+  }
+
+  // 4. Capacidade de agendamento
+  const sdrs = sdrsAtivos(M.inb);
+  if (sdrs.length) {
+    const leadsR = sdrs.reduce((s, a) => s + (a.leads_recebidos || 0), 0), ag = sdrs.reduce((s, a) => s + (a.agendamentos || 0), 0);
+    const meta = (M.inb.agendadores_meta || {}).meta_agendamento_pct;
+    let s = `<b>Agendamento:</b> ${sdrs.length} SDR(s) ativo(s) (${sdrs.map(a => esc(a.nome.split(' ')[0])).join(', ')}) para ${fmtN(leadsR)} leads, ${fmtN(leadsR / sdrs.length)} por pessoa. Taxa de agendamento de ${fmtP(100 * ag / (leadsR || 1))}` + (meta ? ` (meta ${meta}%)` : '') + '.';
+    const hist = prev.map(x => sdrsAtivos(x.inb).length).filter(n => n);
+    if (hist.length && Math.max(...hist) > sdrs.length) s += ` Nos meses anteriores eram até ${Math.max(...hist)} SDRs. A queda de CC1 acompanha a queda de capacidade de agendamento.`;
+    out.push(s);
+  }
+
+  // 5. No-show
+  const g = M.geral;
+  if (g.no_show != null && (g.cc1_realizada || 0) + g.no_show > 0) {
+    const pns = 100 * g.no_show / (g.cc1_realizada + g.no_show);
+    if (pns >= 30) out.push(`<b>No-show:</b> ${fmtP(pns)} das CC1 marcadas não aconteceram (${g.no_show} faltas para ${g.cc1_realizada} realizadas${M.inb.consolidado_geral ? ', somando todos os funis' : ', Inbound'}).`);
+  }
+
+  // 6. Qualidade do lead
+  const pr = M.inb.perdidos, c = M.inb.consolidado || {};
+  if (pr && pr.por_motivo && c.leads) {
+    const sp = pr.por_motivo.find(m => /^sem perfil$/i.test(m.motivo));
+    const sr = pr.por_motivo.find(m => /^sem retorno$/i.test(m.motivo));
+    if (sp) out.push(`<b>Qualidade do lead (Inbound):</b> ${fmtN(sp.qualificadora)} leads perdidos por "sem perfil" (${fmtP(100 * sp.qualificadora / c.leads)} dos leads do mês)` + (sr ? ` e ${fmtN(sr.qualificadora)} por "sem retorno"` : '') + '. O primeiro é tema de segmentação de mídia, o segundo de velocidade e cadência de contato.');
+  }
+
+  // 7. Mídia
+  const camp = M.inb.ranking && M.inb.ranking.campanhas;
+  if (camp && camp.piores) {
+    const ralo = camp.piores.filter(x => x.leads >= 50 && x.cc1 === 0).sort((a, b) => b.leads - a.leads)[0];
+    const top = (camp.melhores || []).filter(x => x.leads >= 20).sort((a, b) => b.conversao - a.conversao)[0];
+    let s = '';
+    if (top) s += `<b>Mídia:</b> a melhor campanha com volume é "${esc(top.nome)}" (${top.cc1} CC1 em ${top.leads} leads, ${fmtP(top.conversao)}).`;
+    if (ralo) s += ` "${esc(ralo.nome)}" gerou ${ralo.leads} leads e nenhuma CC1, candidata a pausar ou rever.`;
+    if (s) out.push(s.trim().startsWith('<b>') ? s : '<b>Mídia:</b>' + s);
+  }
+  return out;
+}
+
+// ---------- render ----------
+function tile(lbl, val, sub, extra = '', cls = '') {
+  return `<div class="tile ${cls}"><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="sub">${sub || ''}</div>${extra}</div>`;
+}
+function barra(pct, marcador) {
+  const p = Math.max(0, Math.min(100, pct || 0));
+  return `<div class="bar"><span style="width:${p}%"></span>${marcador != null ? `<i style="left:${Math.min(100, marcador)}%"></i>` : ''}</div>`;
+}
+
+function render(M, prev, insights) {
+  const aberto = mesAberto(M), r = M.ritmo;
+  const PV = analisarPrevisao(M);
+  const pctDias = r.dias_uteis_total ? 100 * r.dias_uteis_passados / r.dias_uteis_total : null;
+  const fp = franquiasPagas(M), pt = partners(M);
+  const meta = M.inb.meta_contratos;
+  const mediaFr = prev.length ? prev.reduce((s, x) => s + (franquiasPagas(x) || 0), 0) / prev.length : null;
+  const mediaVenda = prev.length ? prev.reduce((s, x) => s + (x.sb.venda_realizada_total || 0), 0) / prev.length : null;
+  const mediaCaixa = prev.length ? prev.reduce((s, x) => s + (x.sb.caixa_realizado_total || 0), 0) / prev.length : null;
+  let h = '';
+  let n = 0;
+
+  // 1. Placar
+  h += `<div class="card"><h2><span class="num">${++n}</span> Placar do mês <span class="hint">todos os funis · Partner separado de franquia paga</span></h2><div class="tiles">`;
+  h += tile('Venda realizada', fmtR(M.sb.venda_realizada_total), mediaVenda != null ? `média ${prev.length} meses anteriores: ${fmtRk(mediaVenda)}` : '', mediaVenda ? barra(100 * (M.sb.venda_realizada_total || 0) / mediaVenda, aberto ? pctDias : null) : '');
+  h += tile('Caixa realizado', fmtR(M.sb.caixa_realizado_total), mediaCaixa != null ? `média ${prev.length} meses anteriores: ${fmtRk(mediaCaixa)}` : '', mediaCaixa ? barra(100 * (M.sb.caixa_realizado_total || 0) / mediaCaixa, aberto ? pctDias : null) : '');
+  h += tile('Franquias pagas', fmtN(fp), (meta ? `meta de contratos: ${meta}` : '') + (mediaFr != null ? ` · média: ${fmtN(mediaFr)}` : ''), meta ? barra(100 * fp / meta, aberto ? pctDias : null) : '');
+  h += tile('Partners (grátis)', fmtN(pt), 'não geram receita', '', 'minor');
+  h += `</div><div class="meta-line">${aberto ? `${r.dias_uteis_passados} de ${r.dias_uteis_total} dias úteis (${fmtP(pctDias)}). O traço na barra marca onde deveria estar se o ritmo fosse linear.` : 'Mês fechado.'}</div></div>`;
+
+  // 2. Leitura (insights)
+  const auto = leituraAutomatica(M, prev, PV);
+  h += `<div class="card insights"><h2><span class="num">${++n}</span> Leitura do mês</h2>`;
+  if (insights && (insights.analise || (insights.destaques || []).length)) {
+    h += `<div style="margin-bottom:14px">`;
+    if (insights.analise) h += `<p style="margin:0 0 10px">${esc(insights.analise)}</p>`;
+    if ((insights.destaques || []).length) h += `<ul>${insights.destaques.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    h += `</div>`;
+    if ((insights.acoes || []).length) h += `<h2 style="font-size:13px;margin-top:6px">Ações em andamento</h2><ul>${insights.acoes.map(a => `<li>${typeof a === 'string' ? esc(a) : `${esc(a.acao)}${a.responsavel ? ` <span class="tag">${esc(a.responsavel)}</span>` : ''}${a.prazo ? ` <span class="tag">${esc(a.prazo)}</span>` : ''}`}</li>`).join('')}</ul>`;
+    if ((insights.decisoes_yuri || []).length) h += `<h2 style="font-size:13px;margin-top:10px">Para decidir com o Yuri</h2><ul>${insights.decisoes_yuri.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    h += `<div class="meta-line">Análise atualizada em ${esc(insights.atualizado_em || '—')}${insights.autor ? ' · ' + esc(insights.autor) : ''}</div>`;
+    h += `<details style="margin-top:12px"><summary class="dim" style="cursor:pointer;font-size:12px">Leitura automática dos números (${auto.length} pontos)</summary><ol style="margin-top:10px">${auto.map(x => `<li>${x}</li>`).join('')}</ol></details>`;
+  } else {
+    h += `<ol>${auto.map(x => `<li>${x}</li>`).join('')}</ol><div class="meta-line">Leitura automática, recalculada a cada atualização do painel.</div>`;
+  }
+  h += `</div>`;
+
+  // 3. Projeção e previsão
+  if (aberto) {
+    h += `<div class="card"><h2><span class="num">${++n}</span> Projeção de fechamento <span class="hint">venda · franquias</span></h2><div class="tiles">`;
+    h += tile('Garantido', fmtRk(PV.realizado), 'já fechado no mês');
+    h += tile('Provável', fmtRk(PV.provavel), `${PV.franquiasConfiaveis.length} franquia(s) com previsão consistente, ponderadas pela probabilidade`);
+    h += tile('Teto', fmtRk(PV.teto), `se as ${PV.franquiasNoMes.length} franquias previstas para o mês fecharem`);
+    h += `</div>`;
+    if (PV.problemas.length) {
+      h += `<h2 style="font-size:13px;margin:16px 0 8px">Previsão a atualizar <span class="tag red">${PV.problemas.length}</span> <span class="hint">fora do "provável" até o closer corrigir na planilha</span></h2><div class="scroll"><table><tr><th>Closer</th><th>Negócio</th><th>Modelo</th><th class="n">Venda</th><th class="n">Prob.</th><th>O que corrigir</th></tr>`;
+      for (const {p, probs} of PV.problemas) h += `<tr><td>${esc(p.closer)}</td><td><a href="${esc(p.deal_link)}" target="_blank" rel="noopener">${esc(p.lead)}</a></td><td>${esc(p.modelo)}</td><td class="n">${fmtRk(p.venda)}</td><td class="n">${p.probabilidade == null ? '—' : p.probabilidade + '%'}</td><td class="warn">${probs.join(' · ')}</td></tr>`;
+      h += `</table></div>`;
+    }
+    if (PV.confiaveis.length) {
+      h += `<h2 style="font-size:13px;margin:16px 0 8px">Previsão consistente <span class="tag green">${PV.confiaveis.length}</span></h2><div class="scroll"><table><tr><th>Closer</th><th>Negócio</th><th>Modelo</th><th class="n">Venda</th><th class="n">Prob.</th><th class="n">Fechamento</th></tr>`;
+      for (const p of PV.confiaveis) h += `<tr><td>${esc(p.closer)}</td><td><a href="${esc(p.deal_link)}" target="_blank" rel="noopener">${esc(p.lead)}</a></td><td>${esc(p.modelo)}</td><td class="n">${fmtRk(p.venda)}</td><td class="n">${p.probabilidade}%</td><td class="n">${p.data_fechamento_esperada.split('-').reverse().join('/')}</td></tr>`;
+      h += `</table></div>`;
+    }
+    if (PV.posMes.length) h += `<div class="meta-line">Postergados para o mês seguinte: ${PV.posMes.length} negócio(s), ${fmtRk(PV.posMes.reduce((s, p) => s + (p.venda || 0), 0))} (${PV.posMes.map(p => esc(p.lead)).join(', ')}).</div>`;
+    h += `</div>`;
+  }
+
+  // 4. Funil em volume vs média
+  const v = volumes(M), f = fatorProjecao(M);
+  const etapas = [['leads','Leads'],['cc1','CC1 realizada'],['fpq','FPQ recebida'],['cc2','CC2 realizada'],['cc3','CC3 realizada'],['contrato','Contrato enviado'],['franquias','Franquia paga']];
+  let piorK = null, piorD = 0;
+  const linhas = etapas.map(([k, lbl]) => {
+    const med = prev.length ? prev.reduce((s, x) => s + (volumes(x)[k] || 0), 0) / prev.length : null;
+    const proj = v[k] == null ? null : v[k] * f;
+    const dif = med ? 100 * (proj - med) / med : null;
+    if (dif != null && ['leads','cc1','fpq','cc2'].includes(k) && dif < piorD) { piorD = dif; piorK = k; }
+    return {k, lbl, val: v[k], med, proj, dif};
+  });
+  h += `<div class="card"><h2><span class="num">${++n}</span> Funil Inbound em volume <span class="hint">${aberto ? 'realizado até agora · projeção no ritmo atual vs. média dos meses anteriores' : 'vs. média dos meses anteriores'} · sem taxa entre etapas (leads de meses diferentes)</span></h2><div class="funil">`;
+  for (const L of linhas) {
+    const cls = L.dif == null ? 'dim' : L.dif <= -15 ? 'bad' : L.dif >= 10 ? 'good' : 'dim';
+    h += `<div class="etapa ${L.k === piorK && piorD < -15 ? 'pior' : ''}"><div class="lbl">${L.lbl}</div><div class="val">${fmtN(L.val)}</div><div class="cmp ${cls}">${aberto && L.val != null ? `→ ~${fmtN(L.proj)} no mês<br>` : ''}${L.med != null ? `média ${fmtN(L.med)} (${L.dif >= 0 ? '+' : ''}${fmtP(L.dif)})` : ''}</div></div>`;
+  }
+  h += `</div><div class="meta-line">Só o funil Inbound, o único com série comparável desde jul/26. Os outros canais estão no bloco "Por canal". Taxa de conversão real: ver a conversão por entrada na etapa no painel completo.</div></div>`;
+
+  // 5. Tendência
+  const serie = [...prev].reverse().concat([M]);
+  h += `<div class="card"><h2><span class="num">${++n}</span> Tendência <span class="hint">funil Inbound · venda e contratos de todos os funis · mês atual parcial</span></h2><div class="scroll"><table><tr><th>Mês</th><th class="n">Leads</th><th class="n">SDRs</th><th class="n">CC1</th><th class="n">No-show</th><th class="n">FPQ</th><th class="n">Franquias (todos)</th><th class="n">Partners</th><th class="n">Venda</th><th class="n">Caixa</th></tr>`;
+  for (const x of serie) {
+    const vx = volumes(x);
+    const pns = vx.no_show != null && (vx.cc1 + vx.no_show) ? 100 * vx.no_show / (vx.cc1 + vx.no_show) : null;
+    h += `<tr class="${x === M ? 'cur' : ''}"><td>${esc(x.mesLabel)}${mesAberto(x) ? ' <span class="tag">parcial</span>' : ''}</td><td class="n">${fmtN(vx.leads)}</td><td class="n">${sdrsAtivos(x.inb).length || '—'}</td><td class="n">${fmtN(vx.cc1)}</td><td class="n">${fmtP(pns)}</td><td class="n">${fmtN(vx.fpq)}</td><td class="n">${fmtN(franquiasPagas(x))}</td><td class="n">${x.sb.contratos_fechados_partner == null ? '—' : fmtN(x.sb.contratos_fechados_partner)}</td><td class="n">${fmtRk(x.sb.venda_realizada_total)}</td><td class="n">${fmtRk(x.sb.caixa_realizado_total)}</td></tr>`;
+  }
+  h += `</table></div><div class="meta-line">Até ago/26 o painel não separava Partner de franquia paga.</div></div>`;
+
+  // 6. Canais
+  if (M.funis.length > 1) {
+    h += `<div class="card"><h2><span class="num">${++n}</span> Por canal</h2><div class="scroll"><table><tr><th>Canal</th><th class="n">CC1</th><th class="n">A acontecer</th><th class="n">FPQ</th><th class="n">CC2</th><th class="n">Contrato env.</th><th class="n">Franquias</th><th class="n">Partners</th><th>Observação</th></tr>`;
+    for (const fu of M.funis) {
+      const c = fu.dados.consolidado || {}, sb = fu.dados.scoreboard || {};
+      let obs = '';
+      if (fu.sufixo === 'outbound') {
+        const o = outboundRampa(fu.dados);
+        obs = `Em rampa (base tratada em nov/26). ${fmtN(o.hig)} registros saíram na higienização da base; ${fmtN(o.com)} perdas comerciais. Sem meta de contrato enquanto estiver em rampa.`;
+      } else if (fu.sufixo === 'inbound') {
+        obs = `${fmtN(c.leads)} leads no mês`;
+      } else if (fu.sufixo === 'fenalaw') {
+        const pr = fu.dados.perdidos || {};
+        obs = `Base do evento: ${fmtN(pr.apos_repasse)} perdidos após o repasse ao closer, a maioria "sem retorno"`;
+      } else if (fu.sufixo === 'rebarba') {
+        obs = `Reativação de perdidos: ${fmtN(c.leads)} negócios reabertos no mês`;
+      }
+      h += `<tr><td>${esc(fu.titulo)}</td><td class="n">${fmtN(c.cc1_realizada)}</td><td class="n">${fmtN(c.cc1_futura)}</td><td class="n">${fmtN(c.fpq_realizada)}</td><td class="n">${fmtN(c.cc2_realizada)}</td><td class="n">${fmtN(c.contrato_enviado)}</td><td class="n">${fmtN(sb.contratos_fechados_franquia)}</td><td class="n">${fmtN(sb.contratos_fechados_partner)}</td><td class="dim" style="font-size:12px">${obs}</td></tr>`;
+    }
+    h += `</table></div></div>`;
+  }
+
+  // 7. Time
+  const closers = M.closers.filter(pessoaAtiva);
+  const sdrs = sdrsAtivos(M.inb);
+  h += `<div class="card"><h2><span class="num">${++n}</span> Time <span class="hint">só quem teve atividade no mês · todos os funis</span></h2><div class="two"><div class="scroll"><table><tr><th>Closer</th><th class="n">CC1</th><th class="n">No-show</th><th class="n">FPQ</th><th class="n">CC2</th><th class="n">Contr. env.</th><th class="n">Franq.</th><th class="n">Partner</th></tr>`;
+  for (const c of closers) {
+    const pns = (c.cc1_realizada + c.no_show) ? 100 * c.no_show / (c.cc1_realizada + c.no_show) : null;
+    h += `<tr><td>${esc(c.nome)}</td><td class="n">${fmtN(c.cc1_realizada)}${c.cc1_futura ? ` <span class="dim">+${c.cc1_futura}</span>` : ''}</td><td class="n ${pns >= 40 ? 'bad' : ''}">${fmtP(pns)}</td><td class="n">${fmtN(c.fpq_realizada)}</td><td class="n">${fmtN(c.cc2_realizada)}</td><td class="n">${fmtN(c.contrato_enviado)}</td><td class="n">${fmtN(c.contratos_franquia)}</td><td class="n">${fmtN(c.contratos_partner)}</td></tr>`;
+  }
+  h += `</table></div><div class="scroll"><table><tr><th>SDR</th><th class="n">Leads</th><th class="n">Agend.</th><th class="n">% agend.</th><th class="n">% no-show</th></tr>`;
+  const am = M.inb.agendadores_meta || {};
+  for (const a of sdrs) h += `<tr><td>${esc(a.nome)}</td><td class="n">${fmtN(a.leads_recebidos)}</td><td class="n">${fmtN(a.agendamentos)}</td><td class="n ${am.meta_agendamento_pct && a.pct_agendamento < am.meta_agendamento_pct / 2 ? 'bad' : ''}">${fmtP(a.pct_agendamento)}</td><td class="n">${fmtP(a.pct_no_show)}</td></tr>`;
+  if (!sdrs.length) h += `<tr><td colspan="5" class="dim">sem dados de agendamento neste mês</td></tr>`;
+  h += `</table>${am.meta_agendamento_pct ? `<div class="meta-line">Meta: ${am.meta_agendamento_pct}% de agendamento · ${am.meta_realizada_pct}% realizadas</div>` : ''}</div></div></div>`;
+
+  // 8. Notas
+  h += `<div class="card" id="notas-card"><h2><span class="num">${++n}</span> Notas da reunião <span class="hint">ficam salvas só neste navegador</span></h2><textarea id="notas" placeholder="Combinados, decisões e pendências da reunião com o Yuri…"></textarea><div class="noprint" style="margin-top:8px;display:flex;gap:8px"><button class="pill" id="copiar-notas">Copiar notas</button></div></div>`;
+
+  document.getElementById('app').innerHTML = h;
+  const key = 'resumo-notas-' + chaveMes(M);
+  const ta = document.getElementById('notas');
+  try { ta.value = localStorage.getItem(key) || ''; } catch (e) {}
+  ta.addEventListener('input', () => { try { localStorage.setItem(key, ta.value); } catch (e) {} });
+  document.getElementById('copiar-notas').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(ta.value); };
+}
+
+// ---------- main ----------
+(async function main() {
+  const app = document.getElementById('app');
+  try {
+    const atual = normalizar(await carregar('index.html'));
+    const hist = atual.historico.length ? atual.historico : [{url: 'index.html', label: atual.mesLabel}];
+    const params = new URLSearchParams(location.search);
+    const pedido = params.get('mes');
+    const idx = Math.max(0, pedido ? hist.findIndex(x => x.url.replace('.html', '') === pedido || (x.url === 'index.html' && pedido === 'atual')) : 0);
+    const sel = document.getElementById('mes-select');
+    sel.innerHTML = hist.map((x, i) => `<option value="${esc(x.url === 'index.html' ? 'atual' : x.url.replace('.html', ''))}" ${i === idx ? 'selected' : ''}>${esc(x.label.replace(' (atual)', ''))}</option>`).join('');
+    sel.onchange = () => { location.search = '?mes=' + sel.value; };
+
+    const M = idx === 0 ? atual : normalizar(await carregar(hist[idx].url));
+    document.getElementById('link-painel').href = hist[idx].url;
+    const prevUrls = hist.slice(idx + 1, idx + 4).map(x => x.url);
+    const prev = (await Promise.all(prevUrls.map(u => carregar(u).then(normalizar).catch(() => null)))).filter(Boolean);
+    const insights = await carregarJSON('insights/' + chaveMes(M) + '.json');
+
+    const [ano, mm] = chaveMes(M).split('-');
+    document.getElementById('titulo').textContent = 'Resumo executivo — ' + MESES[+mm - 1] + ' de ' + ano;
+    const g = (M.gerado || '').replace('T', ' ');
+    document.getElementById('subtitulo').textContent = `Dados do Pipedrive atualizados em ${g.slice(8, 10)}/${g.slice(5, 7)} às ${g.slice(11, 16)}` + (mesAberto(M) ? ` · ${M.ritmo.dias_uteis_passados}/${M.ritmo.dias_uteis_total} dias úteis` : ' · mês fechado');
+    document.title = 'Resumo — ' + M.mesLabel + ' · Studio Fiscal';
+    render(M, prev, insights);
+  } catch (e) {
+    app.innerHTML = `<div class="card bad">Não consegui ler os dados do painel: ${esc(e.message)}</div>`;
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>
