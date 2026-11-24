@@ -49,6 +49,9 @@ jobs:
           find insights -maxdepth 1 -name '*.json' -exec cp {} _site/insights/ \;
           cp reunioes/*.md _site/reunioes/ 2>/dev/null || true
           cp reunioes/index.json _site/reunioes/ 2>/dev/null || true
+          # functions/ (Pages Functions — protege resumo.html/insights/reunioes com
+          # senha, ver functions/_middleware.js) precisa ir junto, na raiz do deploy.
+          cp -r functions _site/functions
 
       - name: Deploy no Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
