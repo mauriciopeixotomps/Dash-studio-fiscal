@@ -9,8 +9,6 @@ name: Botão do resumo e registro das reuniões
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: "15,45 * * * *"   # reserva, caso algum push não dispare o fluxo
   workflow_dispatch:
 
 permissions:
