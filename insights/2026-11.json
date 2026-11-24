@@ -1,23 +1,23 @@
 {
-  "atualizado_em": "24/11/2026 07:48",
+  "atualizado_em": "24/11/2026 09:33",
   "autor": "Claude, a partir dos dados do painel",
-  "analise": "Novembro não bate a meta: com 16 de 21 dias úteis passados, são 0 franquias pagas, R$ 0 de venda e R$ 0 de caixa realizados contra a meta de 15 contratos (os 2 contratos do mês são Partner, grátis). Mesmo que as 6 franquias previstas para o mês fechem, o total fica em 6, e a previsão provável, só com negócios consistentes, é uma Platinum de R$ 50 mil com 10% de chance. A quebra está no meio do funil Inbound, não no volume de leads: os leads projetam 1.252 no mês contra média de 1.032, mas os qualificados projetam 62 contra 121, as CC1 realizadas 41 contra 63 e as CC2 9 contra 18. O agendamento depende de 1 SDR, com 5,7% de agendamento contra a meta de 30%.",
+  "analise": "Novembro não bate a meta: com 17 de 21 dias úteis passados, são 0 franquias pagas, R$ 0 de venda e R$ 0 de caixa realizados contra a meta de 15 contratos (os 2 contratos do mês são Partner, grátis). Depois do ajuste da previsão, há 7 franquias previstas (R$ 299,5 mil em venda); a previsão provável, só com os 5 negócios consistentes, soma R$ 105,5 mil ponderados, o equivalente a cerca de 2 franquias. A quebra está no meio do funil Inbound, não no volume de leads: os leads projetam 1.211 no mês contra média de 1.032, mas os qualificados projetam 58 contra 121, as CC1 realizadas 38 contra 63 e as CC2 9 contra 18. O agendamento depende de 1 SDR, com 5,5% de agendamento contra a meta de 30%.",
   "destaques": [
     "Venda e caixa realizados: R$ 0, contra média de R$ 297 mil em venda e R$ 219 mil em caixa nos três meses anteriores.",
-    "Previsão: 7 dos 8 negócios abertos para novembro têm problema (4 com data vencida, 2 sem probabilidade, 1 franquia sem valor).",
-    "Concentração: Rangel (Corporate, R$ 90 mil, 91%) responde por 56% dos R$ 145 mil ponderados; com Roseanne e Cristiane, chega a 97%, e os três estão com data vencida.",
-    "No-show Inbound em 39%, abaixo de outubro (47%), setembro (51%) e agosto (55%).",
-    "Perdas Inbound: 636 leads por \"sem perfil\" (equivalente a 67% dos 954 leads do mês) e 388 por \"sem retorno\".",
+    "Previsão ajustada: 5 de 7 franquias previstas estão consistentes; Mariane dos Santos Souza (R$ 38,3 mil) está sem probabilidade e Sergio de Paula sem valor.",
+    "Concentração: Rangel (Corporate, R$ 90 mil, 50%) responde por 43% dos R$ 105,5 mil ponderados; com Cristiane (70%), chega a 68%. Os dois têm fechamento previsto para 27/11.",
+    "No-show Inbound em 40%, abaixo de outubro (47%), setembro (51%) e agosto (55%).",
+    "Perdas Inbound: 647 leads por \"sem perfil\" (equivalente a 66% dos 980 leads do mês) e 389 por \"sem retorno\".",
     "Outbound em rampa: 306 registros descartados na triagem da base e 1 CC1 realizada, com mais 1 agendada."
   ],
   "acoes": [
-    {"acao": "Atualizar a previsão: datas vencidas (Rangel, Roseanne, Cristiane, Walney), probabilidade em branco (Iule, Itamar) e valor da franquia do Sergio de Paula", "responsavel": "Leonardo Ribeiro e Luciana Issler", "prazo": "24/11, antes da reunião"},
-    {"acao": "Confirmar o status do Rangel (Corporate, R$ 90 mil, 91%), com data de fechamento vencida desde 19/11", "responsavel": "Leonardo Ribeiro", "prazo": "24/11"},
+    {"acao": "Completar a previsão: probabilidade da Mariane dos Santos Souza e do Itamar Buratti, valor da franquia do Sergio de Paula e data do Walney Mendes (vencida desde 30/06)", "responsavel": "Leonardo Ribeiro e Luciana Issler", "prazo": "24/11"},
+    {"acao": "Acompanhar os fechamentos de 27/11 (Rangel, Cristiane, Roseanne), que somam 81% do valor ponderado do mês", "responsavel": "Leonardo Ribeiro", "prazo": "27/11"},
     {"acao": "Outbound: gerar reuniões a partir da base higienizada", "responsavel": "Time de expansão", "prazo": "dezembro"}
   ],
   "decisoes_yuri": [
-    "Capacidade de agendamento: repor SDR ou reduzir a meta. Com 1 SDR e 1.020 leads no mês, a meta de 30% exigiria cerca de 306 agendamentos, contra 58 feitos.",
+    "Capacidade de agendamento: repor SDR ou reduzir a meta. Com 1 SDR e 1.046 leads no mês, a meta de 30% exigiria cerca de 314 agendamentos, contra 58 feitos.",
     "Meta de dezembro: manter 15 contratos ou ajustar à média recente do Inbound (4,7 franquias pagas por mês), definindo o que muda para sustentar o número escolhido.",
-    "Mídia: rever a segmentação que gera \"sem perfil\" (636 perdas no mês) ou aceitar o volume atual e reforçar a qualificação."
+    "Mídia: rever a segmentação que gera \"sem perfil\" (647 perdas no mês) ou aceitar o volume atual e reforçar a qualificação."
   ]
 }
