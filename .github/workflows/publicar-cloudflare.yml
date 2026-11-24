@@ -1,0 +1,58 @@
+# Publica o painel no Cloudflare Pages (dash-studio-fiscal.pages.dev) via
+# wrangler (direct upload — este repo não é "ligado" ao Cloudflare, cada
+# execução sobe os arquivos direto).
+#
+# Dispara:
+#  - de hora em hora, das 7h às 21h (horário de Brasília = UTC-3, sem
+#    horário de verão) — cobre o painel sempre fresco pro time olhar, mesmo
+#    sem nenhum commit novo;
+#  - logo depois que o workflow "Botão do resumo e registro das reuniões"
+#    termina, SE o push que o disparou foi meu (manual) ou do botão
+#    "Publicar"/"Corrigir resumo" do resumo.html (mesma conta, via API do
+#    GitHub) — nunca quando foi o robô de 30 em 30 min ("Auto-update ...")
+#    nem o próprio commit de ajustes ("Painel - ajustes"), senão a cota
+#    gratuita de Actions do repo privado (2.000 min/mês) ia embora rápido.
+name: Publica no Cloudflare Pages
+
+on:
+  schedule:
+    - cron: '0 10-23 * * *'  # 7h-20h BRT
+    - cron: '0 0 * * *'      # 21h BRT
+  workflow_run:
+    workflows: ["Botão do resumo e registro das reuniões"]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar-cloudflare
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: >
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_commit.author.name != 'Painel - ajustes' &&
+       !startsWith(github.event.workflow_run.head_commit.message, 'Auto-update'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Monta pasta pública (sem scripts/, .github/ nem insights/ajustes/ pendentes)
+        run: |
+          rm -rf _site
+          mkdir -p _site/insights _site/reunioes
+          cp *.html _site/ 2>/dev/null || true
+          find insights -maxdepth 1 -name '*.json' -exec cp {} _site/insights/ \;
+          cp reunioes/*.md _site/reunioes/ 2>/dev/null || true
+          cp reunioes/index.json _site/reunioes/ 2>/dev/null || true
+
+      - name: Deploy no Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy _site --project-name=dash-studio-fiscal --branch=main --commit-dirty=true
