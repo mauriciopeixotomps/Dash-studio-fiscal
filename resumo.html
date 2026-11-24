@@ -219,7 +219,32 @@ function analisarPrevisao(M) {
     franquiasConfiaveis: confiaveis.filter(p => p.tipo_contrato === 'franquia'),
     franquiasNoMes: noMes.filter(p => p.tipo_contrato === 'franquia'),
     ponderadoTotal: pond(noMes), maior,
+    resumoTotal: resumoPorFunil(noMes),
+    resumoPonderado: resumoPorFunil(confiaveis),
   };
+}
+
+// Soma franquias/parcerias/venda/caixa por funil (+ venda ponderada pela
+// probabilidade) — usado pro "total geral" (todo negócio previsto no mês,
+// noMes) e pro "ponderado" (só a previsão consistente, confiaveis). Cada
+// grupo já sai com uma linha "TOTAL" no fim, pra não espalhar a soma pelo
+// JS de renderização.
+function resumoPorFunil(lista) {
+  const porFunil = {};
+  const linha = () => ({franquias: 0, parcerias: 0, venda: 0, caixa: 0, vendaPonderada: 0});
+  for (const p of lista) {
+    const f = p.funil || '—';
+    if (!porFunil[f]) porFunil[f] = linha();
+    const g = porFunil[f];
+    if (p.tipo_contrato === 'franquia') g.franquias++; else if (p.tipo_contrato === 'partner') g.parcerias++;
+    g.venda += p.venda || 0;
+    g.caixa += p.caixa || 0;
+    g.vendaPonderada += (p.venda || 0) * (p.probabilidade || 0) / 100;
+  }
+  const funis = Object.keys(porFunil).sort();
+  const total = linha();
+  for (const f of funis) for (const k of Object.keys(total)) total[k] += porFunil[f][k];
+  return {porFunil, funis, total};
 }
 
 // Outbound: higienização x perda comercial
@@ -317,6 +342,21 @@ function barra(pct, marcador) {
   const p = Math.max(0, Math.min(100, pct || 0));
   return `<div class="bar"><span style="width:${p}%"></span>${marcador != null ? `<i style="left:${Math.min(100, marcador)}%"></i>` : ''}</div>`;
 }
+// Tabela resumida (por funil + linha TOTAL) da previsão do mês — "total
+// geral" (ponderado=false, soma cheia de venda/caixa) ou "ponderado"
+// (ponderado=true, só venda ponderada pela probabilidade, sem caixa — não
+// faz sentido ponderar caixa já recebido/a receber por probabilidade de um
+// negócio ainda aberto).
+function tabelaResumoFunil(titulo, resumo, ponderado) {
+  if (!resumo.funis.length) return '';
+  const colVenda = ponderado ? 'Venda ponderada' : 'Venda';
+  const linha = (lbl, g, negrito) => `<tr${negrito ? ' style="font-weight:700;border-top:2px solid var(--border)"' : ''}><td>${esc(lbl)}</td><td class="n">${fmtN(g.franquias)}</td><td class="n">${fmtN(g.parcerias)}</td><td class="n">${fmtRk(ponderado ? g.vendaPonderada : g.venda)}</td>${ponderado ? '' : `<td class="n">${fmtRk(g.caixa)}</td>`}</tr>`;
+  let h = `<h2 style="font-size:13px;margin:16px 0 8px">${esc(titulo)}</h2><div class="scroll"><table><tr><th>Funil</th><th class="n">Franquias</th><th class="n">Parcerias</th><th class="n">${colVenda}</th>${ponderado ? '' : '<th class="n">Caixa</th>'}</tr>`;
+  for (const f of resumo.funis) h += linha(f, resumo.porFunil[f]);
+  h += linha('TOTAL', resumo.total, true);
+  h += `</table></div>`;
+  return h;
+}
 
 function render(M, prev, insights) {
   const aberto = mesAberto(M), r = M.ritmo;
@@ -363,14 +403,16 @@ function render(M, prev, insights) {
     h += tile('Provável', fmtRk(PV.provavel), `${PV.franquiasConfiaveis.length} franquia(s) com previsão consistente, ponderadas pela probabilidade`);
     h += tile('Teto', fmtRk(PV.teto), `se as ${PV.franquiasNoMes.length} franquias previstas para o mês fecharem`);
     h += `</div>`;
+    h += tabelaResumoFunil('Total geral previsto no mês', PV.resumoTotal, false);
+    h += tabelaResumoFunil('Ponderado (só previsão consistente)', PV.resumoPonderado, true);
     if (PV.problemas.length) {
-      h += `<h2 style="font-size:13px;margin:16px 0 8px">Previsão a atualizar <span class="tag red">${PV.problemas.length}</span> <span class="hint">fora do "provável" até o closer corrigir na planilha</span></h2><div class="scroll"><table><tr><th>Closer</th><th>Negócio</th><th>Modelo</th><th class="n">Venda</th><th class="n">Prob.</th><th>O que corrigir</th></tr>`;
-      for (const {p, probs} of PV.problemas) h += `<tr><td>${esc(p.closer)}</td><td><a href="${esc(p.deal_link)}" target="_blank" rel="noopener">${esc(p.lead)}</a></td><td>${esc(p.modelo)}</td><td class="n">${fmtRk(p.venda)}</td><td class="n">${p.probabilidade == null ? '—' : p.probabilidade + '%'}</td><td class="warn">${probs.join(' · ')}</td></tr>`;
+      h += `<h2 style="font-size:13px;margin:16px 0 8px">Previsão a atualizar <span class="tag red">${PV.problemas.length}</span> <span class="hint">fora do "provável" até o closer corrigir na planilha</span></h2><div class="scroll"><table><tr><th>Funil</th><th>Closer</th><th>Negócio</th><th>Modelo</th><th class="n">Venda</th><th class="n">Prob.</th><th>O que corrigir</th></tr>`;
+      for (const {p, probs} of PV.problemas) h += `<tr><td>${esc(p.funil || '—')}</td><td>${esc(p.closer)}</td><td><a href="${esc(p.deal_link)}" target="_blank" rel="noopener">${esc(p.lead)}</a></td><td>${esc(p.modelo)}</td><td class="n">${fmtRk(p.venda)}</td><td class="n">${p.probabilidade == null ? '—' : p.probabilidade + '%'}</td><td class="warn">${probs.join(' · ')}</td></tr>`;
       h += `</table></div>`;
     }
     if (PV.confiaveis.length) {
-      h += `<h2 style="font-size:13px;margin:16px 0 8px">Previsão consistente <span class="tag green">${PV.confiaveis.length}</span></h2><div class="scroll"><table><tr><th>Closer</th><th>Negócio</th><th>Modelo</th><th class="n">Venda</th><th class="n">Prob.</th><th class="n">Fechamento</th></tr>`;
-      for (const p of PV.confiaveis) h += `<tr><td>${esc(p.closer)}</td><td><a href="${esc(p.deal_link)}" target="_blank" rel="noopener">${esc(p.lead)}</a></td><td>${esc(p.modelo)}</td><td class="n">${fmtRk(p.venda)}</td><td class="n">${p.probabilidade}%</td><td class="n">${p.data_fechamento_esperada.split('-').reverse().join('/')}</td></tr>`;
+      h += `<h2 style="font-size:13px;margin:16px 0 8px">Previsão consistente <span class="tag green">${PV.confiaveis.length}</span></h2><div class="scroll"><table><tr><th>Funil</th><th>Closer</th><th>Negócio</th><th>Modelo</th><th class="n">Venda</th><th class="n">Prob.</th><th class="n">Fechamento</th></tr>`;
+      for (const p of PV.confiaveis) h += `<tr><td>${esc(p.funil || '—')}</td><td>${esc(p.closer)}</td><td><a href="${esc(p.deal_link)}" target="_blank" rel="noopener">${esc(p.lead)}</a></td><td>${esc(p.modelo)}</td><td class="n">${fmtRk(p.venda)}</td><td class="n">${p.probabilidade}%</td><td class="n">${p.data_fechamento_esperada.split('-').reverse().join('/')}</td></tr>`;
       h += `</table></div>`;
     }
     if (PV.posMes.length) h += `<div class="meta-line">Postergados para o mês seguinte: ${PV.posMes.length} negócio(s), ${fmtRk(PV.posMes.reduce((s, p) => s + (p.venda || 0), 0))} (${PV.posMes.map(p => esc(p.lead)).join(', ')}).</div>`;
