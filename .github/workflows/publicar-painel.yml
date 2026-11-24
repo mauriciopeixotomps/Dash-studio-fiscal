@@ -1,7 +1,8 @@
 # Após cada atualização do robô (push no main):
 #  - acrescenta o botão "Resumo executivo" ao lado de "Período personalizado"
 #    nas páginas do painel que ainda não têm o botão;
-#  - atualiza reunioes/index.json com a lista das notas de reunião publicadas.
+#  - atualiza reunioes/index.json com a lista das notas de reunião publicadas;
+#  - aplica as correções do resumo (insights/ajustes/*.json) em insights/AAAA-MM.json.
 # Só faz commit se algo mudou. O robô só altera a linha de dados (const D) das
 # páginas, então este commit não conflita com o dele.
 name: Botão do resumo e registro das reuniões
@@ -26,24 +27,27 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Incluir botão e atualizar registro
-        run: node scripts/publicar-site.js .
+      - name: Aplicar correções do resumo, incluir botão e atualizar registro
+        run: |
+          node scripts/aplicar-ajustes.js .
+          node scripts/publicar-site.js .
 
       - name: Commit, se algo mudou
         run: |
-          if git diff --quiet; then echo "Nada a alterar."; exit 0; fi
+          if [ -z "$(git status --porcelain -- '*.html' reunioes insights)" ]; then echo "Nada a alterar."; exit 0; fi
           git config user.name "Painel - ajustes"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- '*.html' reunioes/index.json
-          git commit -m "Botão do resumo e registro das reuniões"
+          git add -A -- '*.html' reunioes/index.json insights
+          git commit -m "Ajustes do painel: botão, reuniões e correções do resumo"
           for i in 1 2 3 4 5; do
             if git push origin HEAD:main; then exit 0; fi
             git fetch --depth=5 origin main
             git reset --hard origin/main
+            node scripts/aplicar-ajustes.js .
             node scripts/publicar-site.js .
-            if git diff --quiet; then echo "Já estava ajustado."; exit 0; fi
-            git add -A -- '*.html' reunioes/index.json
-            git commit -m "Botão do resumo e registro das reuniões"
+            if [ -z "$(git status --porcelain -- '*.html' reunioes insights)" ]; then echo "Já estava ajustado."; exit 0; fi
+            git add -A -- '*.html' reunioes/index.json insights
+            git commit -m "Ajustes do painel: botão, reuniões e correções do resumo"
             sleep 5
           done
           exit 1

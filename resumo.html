@@ -44,6 +44,7 @@
   .insights li { margin-bottom: 8px; }
   .insights li b { color: var(--accent); font-weight: 600; }
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .ed-acao, .ed-dec { grid-template-columns: 1fr 1fr !important; } .ed-acao input[data-k="acao"], .ed-dec input[data-k="texto"] { grid-column: 1 / -1; } }
   @media (max-width: 760px) { .two { grid-template-columns: 1fr; } body { padding: 14px; } .tile .val { font-size: 22px; } }
   .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-dim); margin-left: 6px; }
   .tag.red { color: var(--red); border-color: rgba(239,68,68,.4); }
@@ -346,12 +347,13 @@ function render(M, prev, insights) {
     if ((insights.destaques || []).length) h += `<ul>${insights.destaques.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
     h += `</div>`;
     if ((insights.acoes || []).length) h += `<h2 style="font-size:13px;margin-top:6px">Ações em andamento</h2><ul>${insights.acoes.map(a => `<li>${typeof a === 'string' ? esc(a) : `${esc(a.acao)}${a.responsavel ? ` <span class="tag">${esc(a.responsavel)}</span>` : ''}${a.prazo ? ` <span class="tag">${esc(a.prazo)}</span>` : ''}`}</li>`).join('')}</ul>`;
-    if ((insights.decisoes_yuri || []).length) h += `<h2 style="font-size:13px;margin-top:10px">Para decidir com o Yuri</h2><ul>${insights.decisoes_yuri.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    if ((insights.decisoes_yuri || []).length) h += `<h2 style="font-size:13px;margin-top:10px">Para decidir com o Yuri</h2><ul>${insights.decisoes_yuri.map(x => `<li>${esc(typeof x === 'string' ? x : x.texto)}</li>`).join('')}</ul>`;
     h += `<div class="meta-line">Análise atualizada em ${esc(insights.atualizado_em || '—')}${insights.autor ? ' · ' + esc(insights.autor) : ''}</div>`;
     h += `<details style="margin-top:12px"><summary class="dim" style="cursor:pointer;font-size:12px">Leitura automática dos números (${auto.length} pontos)</summary><ol style="margin-top:10px">${auto.map(x => `<li>${x}</li>`).join('')}</ol></details>`;
   } else {
     h += `<ol>${auto.map(x => `<li>${x}</li>`).join('')}</ol><div class="meta-line">Leitura automática, recalculada a cada atualização do painel.</div>`;
   }
+  h += `<div class="noprint" style="margin-top:12px"><button class="pill" id="corrigir-resumo">Corrigir resumo</button></div><div id="editor-resumo" class="noprint"></div>`;
   h += `</div>`;
 
   // 3. Projeção e previsão
@@ -465,6 +467,66 @@ function render(M, prev, insights) {
     window.open(url, '_blank');
   };
   carregarRegistro();
+  document.getElementById('corrigir-resumo').onclick = () => abrirEditor(M, prev, insights);
+}
+
+// ---------- correção do resumo ----------
+// Monta um formulário com análise, destaques, ações e decisões. "Publicar correção"
+// abre o GitHub com o arquivo insights/ajustes/<mês>__<data-hora>.json pronto; ao
+// confirmar o commit, o fluxo do repositório aplica a correção em insights/<mês>.json.
+function abrirEditor(M, prev, insights) {
+  const box = document.getElementById('editor-resumo');
+  const I = insights || {};
+  const acoes = (I.acoes || []).map(a => typeof a === 'string' ? {acao: a} : a);
+  const decs = (I.decisoes_yuri || []).map(d => typeof d === 'string' ? {texto: d} : d);
+  const campo = 'width:100%;background:var(--card-hi);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px;font:inherit;font-size:13px';
+  const linhaAcao = a => `<div class="ed-acao" style="display:grid;grid-template-columns:1fr 160px 120px auto auto;gap:6px;margin-bottom:6px;align-items:center">`
+    + `<input style="${campo}" data-k="acao" placeholder="Ação" value="${esc(a.acao || '')}">`
+    + `<input style="${campo}" data-k="responsavel" placeholder="Responsável" value="${esc(a.responsavel || '')}">`
+    + `<input style="${campo}" data-k="prazo" placeholder="Prazo" value="${esc(a.prazo || '')}">`
+    + `<label class="dim" style="font-size:12px;white-space:nowrap"><input type="checkbox" data-k="fixo" ${a.fixo ? 'checked' : ''}> fixar</label>`
+    + `<button class="pill" data-rm title="Remover">×</button></div>`;
+  const linhaDec = d => `<div class="ed-dec" style="display:grid;grid-template-columns:1fr auto auto;gap:6px;margin-bottom:6px;align-items:center">`
+    + `<input style="${campo}" data-k="texto" placeholder="Decisão" value="${esc(d.texto || '')}">`
+    + `<label class="dim" style="font-size:12px;white-space:nowrap"><input type="checkbox" data-k="fixo" ${d.fixo ? 'checked' : ''}> fixar</label>`
+    + `<button class="pill" data-rm title="Remover">×</button></div>`;
+  box.innerHTML = `<div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">`
+    + `<h2 style="font-size:13px">Análise</h2><textarea id="ed-analise">${esc(I.analise || '')}</textarea>`
+    + `<h2 style="font-size:13px;margin-top:12px">Destaques <span class="hint">um por linha</span></h2><textarea id="ed-destaques">${esc((I.destaques || []).join('\n'))}</textarea>`
+    + `<h2 style="font-size:13px;margin-top:12px">Ações em andamento <span class="hint">"fixar" mantém o item nas atualizações automáticas</span></h2><div id="ed-acoes">${acoes.map(linhaAcao).join('')}</div><button class="pill" id="ed-add-acao">+ ação</button>`
+    + `<h2 style="font-size:13px;margin-top:12px">Para decidir com o Yuri</h2><div id="ed-decs">${decs.map(linhaDec).join('')}</div><button class="pill" id="ed-add-dec">+ decisão</button>`
+    + `<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="ed-publicar">Publicar correção</button><button class="pill" id="ed-cancelar">Cancelar</button></div>`
+    + `<div class="meta-line">Publicar abre o GitHub com a correção pronta; confirme em "Commit changes". Em 1 a 2 minutos ela aparece para todos. A atualização automática do dia seguinte reescreve análise e destaques, mas mantém os itens fixados.</div></div>`;
+  document.getElementById('corrigir-resumo').style.display = 'none';
+  box.onclick = ev => { if (ev.target.matches('[data-rm]')) ev.target.parentElement.remove(); };
+  document.getElementById('ed-add-acao').onclick = () => document.getElementById('ed-acoes').insertAdjacentHTML('beforeend', linhaAcao({}));
+  document.getElementById('ed-add-dec').onclick = () => document.getElementById('ed-decs').insertAdjacentHTML('beforeend', linhaDec({}));
+  document.getElementById('ed-cancelar').onclick = () => { box.innerHTML = ''; document.getElementById('corrigir-resumo').style.display = ''; };
+  document.getElementById('ed-publicar').onclick = () => {
+    const val = (el, k) => el.querySelector(`[data-k="${k}"]`);
+    const novo = {
+      mes: chaveMes(M),
+      analise: document.getElementById('ed-analise').value.trim(),
+      destaques: document.getElementById('ed-destaques').value.split('\n').map(x => x.trim()).filter(Boolean),
+      acoes: [...document.querySelectorAll('.ed-acao')].map(el => {
+        const a = {acao: val(el, 'acao').value.trim(), responsavel: val(el, 'responsavel').value.trim(), prazo: val(el, 'prazo').value.trim()};
+        if (val(el, 'fixo').checked) a.fixo = true;
+        return a;
+      }).filter(a => a.acao),
+      decisoes_yuri: [...document.querySelectorAll('.ed-dec')].map(el => {
+        const t = val(el, 'texto').value.trim();
+        return val(el, 'fixo').checked ? {texto: t, fixo: true} : t;
+      }).filter(d => typeof d === 'string' ? d : d.texto),
+    };
+    const agora = new Date(), p2 = x => String(x).padStart(2, '0');
+    const carimbo = `${agora.getFullYear()}-${p2(agora.getMonth() + 1)}-${p2(agora.getDate())}T${p2(agora.getHours())}-${p2(agora.getMinutes())}`;
+    novo.salvo_em = `${p2(agora.getDate())}/${p2(agora.getMonth() + 1)}/${agora.getFullYear()} ${p2(agora.getHours())}:${p2(agora.getMinutes())}`;
+    const arquivo = `insights/ajustes/${novo.mes}__${carimbo}.json`;
+    const url = `https://github.com/${REPO}/new/main?filename=${encodeURIComponent(arquivo)}&value=${encodeURIComponent(JSON.stringify(novo, null, 2) + '\n')}&message=${encodeURIComponent('Correção do resumo: ' + novo.salvo_em.slice(0, 5))}`;
+    window.open(url, '_blank');
+    // mostra a correção já nesta tela, enquanto o GitHub publica
+    render(M, prev, {...novo, atualizado_em: novo.salvo_em, autor: 'Maurício (correção aguardando publicação)'});
+  };
 }
 
 // ---------- registro das reuniões ----------
