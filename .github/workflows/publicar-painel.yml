@@ -1,50 +1,51 @@
-# Publica o painel no GitHub Pages a cada push no main (inclusive os do robô).
-# Na cópia publicada, sem alterar os arquivos do repositório:
+# Após cada atualização do robô (push no main):
 #  - acrescenta o botão "Resumo executivo" ao lado de "Período personalizado"
-#    em todas as páginas do painel que têm esse botão;
-#  - gera reunioes/index.json com a lista das notas de reunião publicadas.
-# Requer: Settings > Pages > Build and deployment > Source = "GitHub Actions".
-name: Publicar painel
+#    nas páginas do painel que ainda não têm o botão;
+#  - atualiza reunioes/index.json com a lista das notas de reunião publicadas.
+# Só faz commit se algo mudou. O robô só altera a linha de dados (const D) das
+# páginas, então este commit não conflita com o dele.
+name: Botão do resumo e registro das reuniões
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "15,45 * * * *"   # reserva, caso algum push não dispare a publicação
+    - cron: "15,45 * * * *"   # reserva, caso algum push não dispare o fluxo
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: ajustes-painel
+  cancel-in-progress: false
 
 jobs:
-  montar:
+  ajustar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
-      - name: Montar site
-        run: |
-          mkdir -p _site
-          tar --exclude=./.git --exclude=./.github --exclude=./_site -cf - . | tar -xf - -C _site
-          node scripts/publicar-site.js _site
-
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
         with:
-          path: _site
+          fetch-depth: 1
 
-  publicar:
-    needs: montar
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - id: deploy
-        uses: actions/deploy-pages@v5
+      - name: Incluir botão e atualizar registro
+        run: node scripts/publicar-site.js .
+
+      - name: Commit, se algo mudou
+        run: |
+          if git diff --quiet; then echo "Nada a alterar."; exit 0; fi
+          git config user.name "Painel - ajustes"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- '*.html' reunioes/index.json
+          git commit -m "Botão do resumo e registro das reuniões"
+          for i in 1 2 3 4 5; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch --depth=5 origin main
+            git reset --hard origin/main
+            node scripts/publicar-site.js .
+            if git diff --quiet; then echo "Já estava ajustado."; exit 0; fi
+            git add -A -- '*.html' reunioes/index.json
+            git commit -m "Botão do resumo e registro das reuniões"
+            sleep 5
+          done
+          exit 1
