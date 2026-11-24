@@ -447,7 +447,7 @@ function render(M, prev, insights) {
     + `<div class="noprint" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px"><label class="dim" for="notas-data" style="font-size:13px">Data da reunião</label><input type="date" id="notas-data" class="pill" value="${hojeISO}"></div>`
     + `<textarea id="notas" placeholder="Combinados, decisões e pendências da reunião com o Yuri…"></textarea>`
     + `<div class="noprint" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="publicar-notas">Publicar no painel</button><button class="pill" id="copiar-notas">Copiar notas</button></div>`
-    + `<div class="meta-line noprint" id="publicar-ajuda">Publicar abre o GitHub com a nota pronta; confirme em "Commit changes". Em 1 a 2 minutos ela aparece no registro abaixo.</div></div>`;
+    + `<div class="meta-line noprint" id="publicar-ajuda">Publicar grava a nota no painel. Se já houver nota nessa data, ela é substituída. Quem abre o painel consegue ler o registro.</div></div>`;
   // 9. Registro das reuniões publicadas
   h += `<div class="card" id="registro-card"><h2><span class="num">${++n}</span> Registro das reuniões</h2><div id="registro" class="dim">carregando…</div></div>`;
 
@@ -457,14 +457,20 @@ function render(M, prev, insights) {
   try { ta.value = localStorage.getItem(key) || ''; } catch (e) {}
   ta.addEventListener('input', () => { try { localStorage.setItem(key, ta.value); } catch (e) {} });
   document.getElementById('copiar-notas').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(ta.value); };
-  document.getElementById('publicar-notas').onclick = () => {
+  document.getElementById('publicar-notas').onclick = async ev => {
+    const btn = ev.currentTarget, ajuda = document.getElementById('publicar-ajuda');
     const texto = ta.value.trim();
     const data = document.getElementById('notas-data').value || hojeISO;
     if (!texto) { alert('Escreva as notas antes de publicar.'); return; }
     const [a, m, d] = data.split('-');
     const conteudo = `# Reunião de ${d}/${m}/${a}\n\n${texto}\n`;
-    const url = `https://github.com/${REPO}/new/main?filename=${encodeURIComponent('reunioes/' + data + '.md')}&value=${encodeURIComponent(conteudo)}&message=${encodeURIComponent('Notas da reunião: ' + d + '/' + m)}`;
-    window.open(url, '_blank');
+    btn.disabled = true; btn.textContent = 'Publicando…';
+    const ok = await publicarArquivo('reunioes/' + data + '.md', conteudo, 'Notas da reunião: ' + d + '/' + m);
+    btn.disabled = false; btn.textContent = 'Publicar no painel';
+    if (!ok) return;
+    ajuda.textContent = `Publicado: reunião de ${d}/${m}/${a}. Já está no registro abaixo.`;
+    registroLocal[data] = conteudo;
+    carregarRegistro();
   };
   carregarRegistro();
   document.getElementById('corrigir-resumo').onclick = () => abrirEditor(M, prev, insights);
@@ -496,13 +502,13 @@ function abrirEditor(M, prev, insights) {
     + `<h2 style="font-size:13px;margin-top:12px">Ações em andamento <span class="hint">"fixar" mantém o item nas atualizações automáticas</span></h2><div id="ed-acoes">${acoes.map(linhaAcao).join('')}</div><button class="pill" id="ed-add-acao">+ ação</button>`
     + `<h2 style="font-size:13px;margin-top:12px">Para decidir com o Yuri</h2><div id="ed-decs">${decs.map(linhaDec).join('')}</div><button class="pill" id="ed-add-dec">+ decisão</button>`
     + `<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="ed-publicar">Publicar correção</button><button class="pill" id="ed-cancelar">Cancelar</button></div>`
-    + `<div class="meta-line">Publicar abre o GitHub com a correção pronta; confirme em "Commit changes". Em 1 a 2 minutos ela aparece para todos. A atualização automática do dia seguinte reescreve análise e destaques, mas mantém os itens fixados.</div></div>`;
+    + `<div class="meta-line">Publicar grava a correção no painel; em 1 a 2 minutos ela aparece para todos. A atualização automática do dia seguinte reescreve análise e destaques, mas mantém os itens fixados.</div></div>`;
   document.getElementById('corrigir-resumo').style.display = 'none';
   box.onclick = ev => { if (ev.target.matches('[data-rm]')) ev.target.parentElement.remove(); };
   document.getElementById('ed-add-acao').onclick = () => document.getElementById('ed-acoes').insertAdjacentHTML('beforeend', linhaAcao({}));
   document.getElementById('ed-add-dec').onclick = () => document.getElementById('ed-decs').insertAdjacentHTML('beforeend', linhaDec({}));
   document.getElementById('ed-cancelar').onclick = () => { box.innerHTML = ''; document.getElementById('corrigir-resumo').style.display = ''; };
-  document.getElementById('ed-publicar').onclick = () => {
+  document.getElementById('ed-publicar').onclick = async () => {
     const val = (el, k) => el.querySelector(`[data-k="${k}"]`);
     const novo = {
       mes: chaveMes(M),
@@ -522,15 +528,70 @@ function abrirEditor(M, prev, insights) {
     const carimbo = `${agora.getFullYear()}-${p2(agora.getMonth() + 1)}-${p2(agora.getDate())}T${p2(agora.getHours())}-${p2(agora.getMinutes())}`;
     novo.salvo_em = `${p2(agora.getDate())}/${p2(agora.getMonth() + 1)}/${agora.getFullYear()} ${p2(agora.getHours())}:${p2(agora.getMinutes())}`;
     const arquivo = `insights/ajustes/${novo.mes}__${carimbo}.json`;
-    const url = `https://github.com/${REPO}/new/main?filename=${encodeURIComponent(arquivo)}&value=${encodeURIComponent(JSON.stringify(novo, null, 2) + '\n')}&message=${encodeURIComponent('Correção do resumo: ' + novo.salvo_em.slice(0, 5))}`;
-    window.open(url, '_blank');
-    // mostra a correção já nesta tela, enquanto o GitHub publica
-    render(M, prev, {...novo, atualizado_em: novo.salvo_em, autor: 'Maurício (correção aguardando publicação)'});
+    const btn = document.getElementById('ed-publicar');
+    btn.disabled = true; btn.textContent = 'Publicando…';
+    const ok = await publicarArquivo(arquivo, JSON.stringify(novo, null, 2) + '\n', 'Correção do resumo: ' + novo.salvo_em.slice(0, 5));
+    btn.disabled = false; btn.textContent = 'Publicar correção';
+    if (!ok) return;
+    render(M, prev, {...novo, atualizado_em: novo.salvo_em, autor: 'Maurício (ajuste manual)'});
   };
 }
 
 // ---------- registro das reuniões ----------
 const REPO = 'mauriciopeixotomps/Dash-studio-fiscal';
+const registroLocal = {}; // notas publicadas nesta sessão, mostradas antes de o site republicar
+// ---------- publicação direta (API do GitHub, com chave guardada só neste navegador) ----------
+const CHAVE_TOKEN = 'painel-chave-publicacao';
+function lerToken() { try { return localStorage.getItem(CHAVE_TOKEN) || ''; } catch (e) { return ''; } }
+function salvarToken(t) { try { t ? localStorage.setItem(CHAVE_TOKEN, t) : localStorage.removeItem(CHAVE_TOKEN); } catch (e) {} }
+function b64utf8(s) { const b = new TextEncoder().encode(s); let bin = ''; b.forEach(x => bin += String.fromCharCode(x)); return btoa(bin); }
+function pedirToken() {
+  return new Promise(resolve => {
+    const fundo = document.createElement('div');
+    fundo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px';
+    const link = `https://github.com/settings/personal-access-tokens/new?name=${encodeURIComponent('Painel Studio Fiscal - publicar')}&description=${encodeURIComponent('Publicar notas e correcoes do Resumo executivo')}&target_name=mauriciopeixotomps&expires_in=none&contents=write`;
+    fundo.innerHTML = `<div class="card" style="max-width:520px;width:100%;margin:0">`
+      + `<h2>Ativar publicação neste navegador</h2>`
+      + `<p style="font-size:13px;margin:0 0 8px">Só na primeira vez. Depois, "Publicar" publica direto, sem abrir o GitHub.</p>`
+      + `<ol style="font-size:13px;padding-left:18px;margin:0 0 10px">`
+      + `<li><a href="${link}" target="_blank" rel="noopener">Abra esta página do GitHub</a> (já vem preenchida).</li>`
+      + `<li>Em "Repository access", escolha <b>Only select repositories</b> e marque <b>Dash-studio-fiscal</b>.</li>`
+      + `<li>Confira que "Contents" está em <b>Read and write</b> e clique em <b>Generate token</b>.</li>`
+      + `<li>Copie a chave (começa com <code>github_pat_</code>) e cole abaixo.</li></ol>`
+      + `<input id="tk-in" placeholder="github_pat_..." style="width:100%;background:var(--card-hi);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px;font:inherit;font-size:13px">`
+      + `<div class="meta-line">A chave fica guardada só neste navegador e dá acesso apenas a este repositório.</div>`
+      + `<div style="margin-top:12px;display:flex;gap:8px"><button class="pill" id="tk-ok">Salvar e publicar</button><button class="pill" id="tk-x">Cancelar</button></div></div>`;
+    document.body.appendChild(fundo);
+    const fim = v => { fundo.remove(); resolve(v); };
+    fundo.querySelector('#tk-ok').onclick = () => { const t = fundo.querySelector('#tk-in').value.trim(); if (t) { salvarToken(t); fim(t); } };
+    fundo.querySelector('#tk-x').onclick = () => fim('');
+  });
+}
+// Grava (cria ou substitui) um arquivo no main. Retorna true se publicou.
+async function publicarArquivo(caminho, conteudo, mensagem) {
+  let token = lerToken() || await pedirToken();
+  if (!token) return false;
+  const api = `https://api.github.com/repos/${REPO}/contents/${caminho.split('/').map(encodeURIComponent).join('/')}`;
+  for (let tentativa = 0; tentativa < 3; tentativa++) {
+    const cab = {Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json'};
+    let sha;
+    const g = await fetch(api + '?ref=main', {headers: cab, cache: 'no-store'});
+    if (g.status === 401) { salvarToken(''); token = await pedirToken(); if (!token) return false; continue; }
+    if (g.ok) sha = (await g.json()).sha;
+    const r = await fetch(api, {method: 'PUT', headers: {...cab, 'Content-Type': 'application/json'},
+      body: JSON.stringify({message: mensagem, content: b64utf8(conteudo), branch: 'main', ...(sha ? {sha} : {})})});
+    if (r.ok) return true;
+    if (r.status === 401 || r.status === 403 || r.status === 404) {
+      salvarToken('');
+      alert('A chave não tem permissão para publicar neste repositório. Gere uma nova, com acesso ao Dash-studio-fiscal e "Contents: Read and write".');
+      token = await pedirToken(); if (!token) return false; continue;
+    }
+    if (r.status !== 409 && r.status !== 422) { alert('Não consegui publicar agora (erro ' + r.status + '). Tente de novo em instantes.'); return false; }
+  }
+  alert('Não consegui publicar agora. Tente de novo em instantes.');
+  return false;
+}
+
 async function listarNotas() {
   const idx = await carregarJSON('reunioes/index.json');
   if (Array.isArray(idx)) return idx;
@@ -543,8 +604,10 @@ async function listarNotas() {
 async function carregarRegistro() {
   const box = document.getElementById('registro');
   const notas = await listarNotas();
+  for (const data of Object.keys(registroLocal)) if (!notas.some(nt => nt.data === data)) notas.push({arquivo: data + '.md', data});
+  notas.sort((x, y) => y.arquivo.localeCompare(x.arquivo));
   if (!notas.length) { box.innerHTML = 'Nenhuma reunião publicada ainda.'; return; }
-  const textos = await Promise.all(notas.map(nt => fetch('reunioes/' + nt.arquivo + '?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.text() : '').catch(() => '')));
+  const textos = await Promise.all(notas.map(nt => registroLocal[nt.data] ? Promise.resolve(registroLocal[nt.data]) : fetch('reunioes/' + nt.arquivo + '?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.text() : '').catch(() => '')));
   box.classList.remove('dim');
   box.innerHTML = notas.map((nt, i) => {
     const [a, m, d] = nt.data.split('-');
