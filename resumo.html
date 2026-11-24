@@ -439,8 +439,15 @@ function render(M, prev, insights) {
   if (!sdrs.length) h += `<tr><td colspan="5" class="dim">sem dados de agendamento neste mês</td></tr>`;
   h += `</table>${am.meta_agendamento_pct ? `<div class="meta-line">Meta: ${am.meta_agendamento_pct}% de agendamento · ${am.meta_realizada_pct}% realizadas</div>` : ''}</div></div></div>`;
 
-  // 8. Notas
-  h += `<div class="card" id="notas-card"><h2><span class="num">${++n}</span> Notas da reunião <span class="hint">ficam salvas só neste navegador</span></h2><textarea id="notas" placeholder="Combinados, decisões e pendências da reunião com o Yuri…"></textarea><div class="noprint" style="margin-top:8px;display:flex;gap:8px"><button class="pill" id="copiar-notas">Copiar notas</button></div></div>`;
+  // 8. Notas da reunião (rascunho neste navegador + publicação no painel)
+  const hojeISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  h += `<div class="card" id="notas-card"><h2><span class="num">${++n}</span> Notas da reunião <span class="hint">o rascunho fica neste navegador até você publicar</span></h2>`
+    + `<div class="noprint" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px"><label class="dim" for="notas-data" style="font-size:13px">Data da reunião</label><input type="date" id="notas-data" class="pill" value="${hojeISO}"></div>`
+    + `<textarea id="notas" placeholder="Combinados, decisões e pendências da reunião com o Yuri…"></textarea>`
+    + `<div class="noprint" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="publicar-notas">Publicar no painel</button><button class="pill" id="copiar-notas">Copiar notas</button></div>`
+    + `<div class="meta-line noprint" id="publicar-ajuda">Publicar abre o GitHub com a nota pronta; confirme em "Commit changes". Em 1 a 2 minutos ela aparece no registro abaixo.</div></div>`;
+  // 9. Registro das reuniões publicadas
+  h += `<div class="card" id="registro-card"><h2><span class="num">${++n}</span> Registro das reuniões</h2><div id="registro" class="dim">carregando…</div></div>`;
 
   document.getElementById('app').innerHTML = h;
   const key = 'resumo-notas-' + chaveMes(M);
@@ -448,6 +455,40 @@ function render(M, prev, insights) {
   try { ta.value = localStorage.getItem(key) || ''; } catch (e) {}
   ta.addEventListener('input', () => { try { localStorage.setItem(key, ta.value); } catch (e) {} });
   document.getElementById('copiar-notas').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(ta.value); };
+  document.getElementById('publicar-notas').onclick = () => {
+    const texto = ta.value.trim();
+    const data = document.getElementById('notas-data').value || hojeISO;
+    if (!texto) { alert('Escreva as notas antes de publicar.'); return; }
+    const [a, m, d] = data.split('-');
+    const conteudo = `# Reunião de ${d}/${m}/${a}\n\n${texto}\n`;
+    const url = `https://github.com/${REPO}/new/main?filename=${encodeURIComponent('reunioes/' + data + '.md')}&value=${encodeURIComponent(conteudo)}&message=${encodeURIComponent('Notas da reunião: ' + d + '/' + m)}`;
+    window.open(url, '_blank');
+  };
+  carregarRegistro();
+}
+
+// ---------- registro das reuniões ----------
+const REPO = 'mauriciopeixotomps/Dash-studio-fiscal';
+async function listarNotas() {
+  const idx = await carregarJSON('reunioes/index.json');
+  if (Array.isArray(idx)) return idx;
+  try { // reserva: lista a pasta pela API pública do GitHub
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/reunioes`);
+    if (!r.ok) return [];
+    return (await r.json()).filter(x => /^\d{4}-\d{2}-\d{2}.*\.md$/.test(x.name)).map(x => ({arquivo: x.name, data: x.name.slice(0, 10)})).sort((x, y) => y.arquivo.localeCompare(x.arquivo));
+  } catch (e) { return []; }
+}
+async function carregarRegistro() {
+  const box = document.getElementById('registro');
+  const notas = await listarNotas();
+  if (!notas.length) { box.innerHTML = 'Nenhuma reunião publicada ainda.'; return; }
+  const textos = await Promise.all(notas.map(nt => fetch('reunioes/' + nt.arquivo + '?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.text() : '').catch(() => '')));
+  box.classList.remove('dim');
+  box.innerHTML = notas.map((nt, i) => {
+    const [a, m, d] = nt.data.split('-');
+    const corpo = textos[i].replace(/^# .*\n+/, '').trim();
+    return `<details ${i === 0 ? 'open' : ''} style="border-top:1px solid var(--border);padding:8px 0"><summary style="cursor:pointer;font-weight:600">Reunião de ${d}/${m}/${a}</summary><div style="white-space:pre-wrap;margin-top:6px;font-size:13px">${esc(corpo) || '<span class="dim">nota vazia</span>'}</div></details>`;
+  }).join('');
 }
 
 // ---------- main ----------
