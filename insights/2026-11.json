@@ -1,25 +1,25 @@
 {
-  "atualizado_em": "27/11/2026 04:40",
+  "atualizado_em": "27/11/2026 18:02",
   "autor": "Claude, a partir dos dados do painel",
-  "analise": "Novembro não bate a meta: com 19 de 21 dias úteis passados, são 0 franquias pagas, R$ 0 de venda e R$ 0 de caixa realizados contra a meta de 15 contratos (os 2 contratos do mês são Partner, grátis). Restam 7 franquias previstas no mês (R$ 304,5 mil em venda), mas só 4 estão consistentes e a previsão provável soma R$ 120,4 mil ponderados, o equivalente a 1,7 franquia pela soma das probabilidades. A quebra está no meio do funil Inbound, não no volume de leads: os leads projetam 1.267 no mês contra média de 1.032 nos três meses anteriores, mas os qualificados projetam 62 contra 121, as CC1 realizadas 38 contra 63 e as CC2 cerca de 10 contra 18. O agendamento depende de 1 SDR, com 5,4% de agendamento contra a meta de 30%.",
+  "analise": "Novembro não bate a meta: com 20 de 21 dias úteis passados, há 1 franquia paga (Fred Garcia), R$ 53,3 mil de venda e R$ 33,3 mil de caixa realizados contra a meta de 15 contratos; os outros 2 contratos do mês são Partner, grátis. Mesmo que as 5 franquias ainda previstas para novembro fechem, o mês termina com 6, e só 2 delas (Iule Miranda e Stanley Martins) estão consistentes, com R$ 23,0 mil ponderados, o equivalente a 0,6 franquia. A quebra está no meio do funil Inbound, não no volume de leads: os leads projetam 1.238 no mês contra média de 1.032 nos três meses anteriores, mas os qualificados projetam 60 contra 121, as CC1 realizadas 37 contra 63 e as CC2 9 contra 18. O agendamento depende de 1 SDR, com 5,4% de agendamento contra a meta de 30%.",
   "destaques": [
-    "Venda e caixa realizados: R$ 0, contra média de R$ 297 mil em venda e R$ 219 mil em caixa de agosto a outubro.",
-    "Previsão: 4 de 7 franquias previstas no mês estão consistentes; Mariane dos Santos Souza e Elton Florindo estão sem probabilidade, e Mariane e Sergio de Paula sem valor de franquia.",
-    "Concentração: Raphaela Lopes Cerqueira (R$ 46,6 mil) e Rangel (R$ 45 mil) respondem por 76% dos R$ 120,4 mil ponderados; a data de fechamento da Raphaela (26/11) já passou.",
-    "Postergados para dezembro: Cristiane (70%), Cyro Neto e Guilherme Carvalho, somando R$ 169,8 mil em venda fora do mês.",
-    "No-show Inbound em 43,3%, abaixo de outubro (47,2%), setembro (50,8%) e agosto (55,2%).",
-    "Perdas Inbound: 699 leads por \"sem perfil\" (equivalente a 61% dos 1.146 leads do mês) e 408 por \"sem retorno\"."
+    "Venda e caixa realizados: R$ 53,3 mil e R$ 33,3 mil, contra média de R$ 297 mil em venda e R$ 219 mil em caixa de agosto a outubro.",
+    "Previsão do mês: 2 de 5 franquias estão consistentes; Mariane dos Santos Souza e Elton Florindo estão sem probabilidade, Mariane e Sergio de Paula sem valor de franquia, e o Partner Walney Mendes tem data vencida desde 30/06.",
+    "Concentração: Iule Miranda (R$ 15,3 mil) responde por 67% dos R$ 23,0 mil ponderados consistentes do mês; o restante é Stanley Martins (R$ 7,7 mil, 33%).",
+    "Postergados para dezembro: Cristiane (70%), Guilherme Carvalho (50%) e Cyro Neto (30%), somando R$ 169,8 mil em venda; Rangel e Roseanne Thaisy foram para 13/01/2027 (R$ 134,8 mil).",
+    "No-show Inbound em 44,4%, abaixo de outubro (47,2%), setembro (50,8%) e agosto (55,2%).",
+    "Perdas Inbound: 707 leads por \"sem perfil\" (equivalente a 60% dos 1.179 leads do mês) e 478 por \"sem retorno\"."
   ],
   "acoes": [
-    {"acao": "Completar a previsão hoje: probabilidade da Mariane dos Santos Souza, do Elton Florindo e do Itamar Buratti, valor da franquia do Sergio de Paula e da Mariane, e data do Walney Mendes (vencida desde 30/06)", "responsavel": "Leonardo Ribeiro e Luciana Issler", "prazo": "27/11"},
-    {"acao": "Atualizar o status da Raphaela Lopes Cerqueira (R$ 93,3 mil, 50%), com fechamento previsto para 26/11 e ainda em aberto", "responsavel": "Fred Garcia", "prazo": "27/11"},
-    {"acao": "Acompanhar os fechamentos de 27/11 e 30/11 (Rangel, Roseanne, Iule), que somam 61% do valor ponderado do mês", "responsavel": "Leonardo Ribeiro e Luciana Issler", "prazo": "30/11"},
+    {"acao": "Completar a previsão: probabilidade da Mariane dos Santos Souza e do Elton Florindo, valor da franquia da Mariane e do Sergio de Paula, e data do Walney Mendes (vencida desde 30/06)", "responsavel": "Leonardo Ribeiro e Luciana Issler", "prazo": "30/11"},
+    {"acao": "Confirmar fechamento ou nova data da Mariane dos Santos Souza e do Elton Florindo, previstos para 27/11 e ainda em aberto", "responsavel": "Leonardo Ribeiro", "prazo": "30/11"},
+    {"acao": "Acompanhar os fechamentos de 30/11 (Iule Miranda, Stanley Martins, Sergio de Paula), últimas franquias previstas no mês", "responsavel": "Luciana Issler e Leonardo Ribeiro", "prazo": "30/11"},
     {"acao": "Revisar a confirmação das reuniões da agenda do Fred Garcia: 19 no-shows para 19 CC1 realizadas no mês", "responsavel": "Fred Garcia", "prazo": "02/12"},
     {"acao": "Outbound: gerar reuniões a partir da base higienizada", "responsavel": "Time de expansão", "prazo": "dezembro"}
   ],
   "decisoes_yuri": [
-    "Capacidade de agendamento: repor SDR ou reduzir a meta. Com 1 SDR e 1.215 leads no mês, a meta de 30% exigiria cerca de 365 agendamentos, contra 66 feitos.",
-    "Meta de dezembro: manter 15 contratos ou ajustar à média recente do Inbound (4,7 franquias pagas por mês de agosto a outubro), considerando os R$ 169,8 mil já postergados para dezembro.",
-    "Mídia: rever a segmentação que gera \"sem perfil\" (699 perdas no mês) ou aceitar o volume atual e reforçar a qualificação."
+    "Capacidade de agendamento: repor SDR ou reduzir a meta. Com 1 SDR e 1.247 leads no mês, a meta de 30% exigiria cerca de 374 agendamentos, contra 67 feitos.",
+    "Meta de dezembro: manter 15 contratos ou ajustar à média recente do Inbound (4,7 franquias pagas por mês de agosto a outubro), considerando os R$ 169,8 mil já postergados para dezembro (R$ 84,9 mil ponderados).",
+    "Mídia: rever a segmentação que gera \"sem perfil\" (707 perdas no mês) ou aceitar o volume atual e reforçar a qualificação."
   ]
 }
